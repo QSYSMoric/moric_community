@@ -13,7 +13,7 @@ export default defineNuxtConfig({
   css: ["@/assets/main.scss"],
   devtools: { enabled: true },
   // enable takeover mode
-  typescript: { shim: false },
+  typescript: { shim: true },
   build: { transpile: ["vuetify"] },
   modules: [
     "@kevinmarrec/nuxt-pwa",
@@ -27,8 +27,8 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: "Vuetify 3 + Nuxt 3 Starter",
-      titleTemplate: "%s | Vuetify 3 + Nuxt 3 Starter",
+      title: "社区管理系统",
+      // titleTemplate: "%s | Vuetify 3 + Nuxt 3 Starter",
       link: [
         { rel: "stylesheet", href: "https://rsms.me/inter/inter.css" },
         { rel: "preconnect", href: "https://rsms.me/" },

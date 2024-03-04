@@ -22,7 +22,7 @@
     "vuetify": "^3.5.2"
   },
   "dependencies": {
-    "vite-plugin-vuetify": "^2.0.1",
+    "vite-plugin-vuetify": "^2.0.2",
     "vue": "^3.4.19"
   }
 }

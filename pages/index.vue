@@ -5,7 +5,7 @@
         <VRow no-gutters align="center" justify="center">
           <VCol cols="12" md="6">
             <h1>登录</h1>
-            <p class="text-medium-emphasis">输入你的账号和密码</p>
+            <p class="text-medium-emphasis">输入你的账号进入社区</p>
 
             <VForm @submit.prevent="submit" class="mt-7">
               <div class="mt-1">
@@ -26,7 +26,6 @@
                   v-model="password"
                   prepend-inner-icon="fluent:password-20-regular"
                   id="password"
-                  autocomplete="off"
                   name="password"
                   type="password"
                 />
@@ -37,13 +36,13 @@
             </VForm>
             <p class="text-body-2 mt-10">
               <NuxtLink to="/reset-password" class="font-weight-bold text-primary"
-                >忘记密码?</NuxtLink
+                >忘记密码了吗?</NuxtLink
               >
             </p>
             <p class="text-body-2 mt-4">
               <span
-                >没有账号?
-                <NuxtLink to="/signup" class="font-weight-bold text-primary">登录</NuxtLink></span
+                >没有帐户？
+                <NuxtLink to="/signup" class="font-weight-bold text-primary">跟我来</NuxtLink></span
               >
             </p>
           </VCol>
@@ -69,14 +68,18 @@
   </VContainer>
 </template>
 
-<script setup lang="ts">
+<script setup>
 const email = ref("");
 const password = ref("");
+const { notify } = useNotification();
+const { ruleEmail, rulePassLen, ruleRequired } = useFormRules();
 
-const { ruleEmail, rulePassLen } = useFormRules();
-
-function ruleRequired(v) {
-  return !!v || "必须输入";
-}
-const submit = async () => {};
+const submit = async () => {
+  notify({
+    title: "Title",
+    text: "Hello notify!",
+    type: "error",
+    position: ["top", "center"],
+  });
+};
 </script>

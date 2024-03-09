@@ -59,6 +59,7 @@
 <script setup lang="ts">
 const email = ref("");
 const password = ref("");
+
 const { ruleEmail, rulePassLen, ruleRequired } = useFormRules();
 
 const submit = async () => {};

@@ -13,7 +13,7 @@ export default defineNuxtConfig({
   css: ["@/assets/main.scss"],
   devtools: { enabled: true },
   // enable takeover mode
-  typescript: { shim: true },
+  typescript: { shim: false },
   build: { transpile: ["vuetify"] },
   modules: [
     "@kevinmarrec/nuxt-pwa",
@@ -23,12 +23,20 @@ export default defineNuxtConfig({
         config.plugins.push(vuetify());
       });
     },
+    "nuxt3-notifications",
   ],
-
+  // imports: {
+  //   presets: [
+  //     {
+  //       from: "useNotification",
+  //       imports: ["notify"],
+  //     },
+  //   ],
+  // },
   app: {
     head: {
       title: "社区管理系统",
-      // titleTemplate: "%s | Vuetify 3 + Nuxt 3 Starter",
+      titleTemplate: "%s | 社区管理系统",
       link: [
         { rel: "stylesheet", href: "https://rsms.me/inter/inter.css" },
         { rel: "preconnect", href: "https://rsms.me/" },

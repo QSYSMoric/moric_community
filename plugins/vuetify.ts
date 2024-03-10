@@ -29,19 +29,15 @@ export default defineNuxtPlugin((app) => {
         light: {
           dark: false,
           colors: {
-            primary: colors.teal.darken1, // #E53935
-            secondary: colors.teal.lighten4, // #FFCDD2
+            primary: colors.teal.darken3, // #E53935
+            secondary: colors.teal.darken2, // #FFCDD2
           },
         },
         dark,
       },
     },
     icons: {
-      defaultSet: "custom",
-      aliases,
-      sets: {
-        custom,
-      },
+      defaultSet: "mdi",
     },
     locale: {
       locale: "zhHans",

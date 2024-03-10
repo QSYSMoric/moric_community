@@ -24,6 +24,7 @@ export default defineNuxtConfig({
       });
     },
     "nuxt3-notifications",
+    "@nuxtjs/svg-sprite",
   ],
 
   // imports: {
@@ -36,7 +37,7 @@ export default defineNuxtConfig({
   // },
   app: {
     head: {
-      title: "社区管理系统",
+      title: "小青社",
       titleTemplate: "%s | 社区管理系统",
       link: [
         { rel: "stylesheet", href: "https://rsms.me/inter/inter.css" },

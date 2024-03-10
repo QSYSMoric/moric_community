@@ -4,5 +4,6 @@
       <NuxtPage />
     </NuxtLayout>
   </div>
-  <NuxtNotifications postion="top center" :speed="500" />
+  <NuxtNotifications position="top center" :speed="500" />
 </template>
+<script lang="ts" setup></script>

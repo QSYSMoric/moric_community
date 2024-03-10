@@ -11,9 +11,9 @@ const url = "https://vuetify3nuxt3starter.behonbaker.com/";
 export default defineNuxtConfig({
   // import styles
   css: ["@/assets/main.scss"],
-  devtools: { enabled: true },
+  devtools: { enabled: false },
   // enable takeover mode
-  typescript: { shim: false },
+  typescript: { shim: true },
   build: { transpile: ["vuetify"] },
   modules: [
     "@kevinmarrec/nuxt-pwa",
@@ -25,6 +25,7 @@ export default defineNuxtConfig({
     },
     "nuxt3-notifications",
   ],
+
   // imports: {
   //   presets: [
   //     {
@@ -101,7 +102,7 @@ export default defineNuxtConfig({
       ],
     },
   },
-
+  extends: ["@nuxtjs"],
   pwa: {
     meta: {
       name: shortTitle,

@@ -1,30 +1,52 @@
-import { createVuetify } from "vuetify";
+import { createVuetify, type ThemeDefinition } from "vuetify";
+import zhHans from "@/assets/locale/zh-Hans";
+import colors from "vuetify/util/colors";
+import "@mdi/font/css/materialdesignicons.css";
+
+const myCustomLightTheme: ThemeDefinition = {
+  dark: false,
+  colors: {
+    background: "#FFFFFF",
+    surface: "#FFFFFF",
+    primary: "#6200EE",
+    "primary-darken-1": "#3700B3",
+    secondary: "#03DAC6",
+    "secondary-darken-1": "#018786",
+    error: "#B00020",
+    info: "#2196F3",
+    success: "#4CAF50",
+    warning: "#FB8C00",
+  },
+};
 
 export default defineNuxtPlugin((app) => {
   const vuetify = createVuetify({
     ssr: true,
     defaults,
-    // add theme
     theme: {
       defaultTheme: LIGHT_THEME,
       themes: {
-        light,
+        light: {
+          dark: false,
+          colors: {
+            primary: colors.teal.darken1, // #E53935
+            secondary: colors.teal.lighten4, // #FFCDD2
+          },
+        },
         dark,
       },
-      // add color variations
-      //   variations: {
-      //     colors: ["primary", "secondary"],
-      //     lighten: 3,
-      //     darken: 3,
-      //   },
     },
-    // Add the custom iconset
     icons: {
       defaultSet: "custom",
       aliases,
       sets: {
         custom,
       },
+    },
+    locale: {
+      locale: "zhHans",
+      fallback: "zhHans",
+      messages: { zhHans },
     },
   });
 

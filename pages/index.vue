@@ -1,5 +1,5 @@
 <template>
-  <VContainer fluid class="fill-height">
+  <VContainer fluid class="fill-height" locale="zh">
     <VRow no-gutters align="center" justify="center" class="fill-height">
       <VCol cols="12" md="6" lg="5" sm="6">
         <VRow no-gutters align="center" justify="center">
@@ -7,7 +7,7 @@
             <h1>登录</h1>
             <p class="text-medium-emphasis">输入你的账号进入社区</p>
 
-            <VForm @submit.prevent="submit" class="mt-7">
+            <VForm @submit.prevent="submit" class="mt-7" ref="vForm">
               <div class="mt-1">
                 <label class="label text-grey-darken-2" for="email">邮箱</label>
                 <VTextField
@@ -28,6 +28,8 @@
                   id="password"
                   name="password"
                   type="password"
+                  hint="输入你的密码"
+                  autocomplete="off"
                 />
               </div>
               <div class="mt-5">
@@ -55,11 +57,9 @@
           class="h-100 rounded-xl d-flex align-center justify-center"
         >
           <div class="text-center w-50 text-white mx-auto">
-            <h2 class="mb-4">Start your journey today</h2>
+            <h2 class="mb-4">立即开始您的旅程</h2>
             <p>
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Asperiores, inventore quia.
-              Dolorum dolores ad ipsum voluptatum rem, hic placeat, odio, odit numquam quod
-              veritatis accusantium assumenda! Sequi, provident in! Iure!
+              在追寻真理的道路上，我们始终努力寻找那些充满美好的地方，因为在那里，我们将发现我们追求的一切
             </p>
           </div>
         </VImg>
@@ -68,18 +68,42 @@
   </VContainer>
 </template>
 
-<script setup>
-const email = ref("");
-const password = ref("");
+<script setup lang="ts">
+const email = ref<string>("");
+const password = ref<string>("");
 const { notify } = useNotification();
-const { ruleEmail, rulePassLen, ruleRequired } = useFormRules();
-
+const { ruleEmail, rulePassLen } = useFormRules();
+/**
+ * @descripttion:必须输入
+ * @return {*}
+ */
+function ruleRequired(value: any): string | boolean {
+  return !!value || "必要的内容";
+}
+/**
+ * @descripttion:表单
+ * @return {*}
+ */
+interface UserInputMsg {
+  email: string;
+  password: string;
+}
+const vForm = ref();
 const submit = async () => {
-  notify({
-    title: "Title",
-    text: "Hello notify!",
-    type: "error",
-    position: ["top", "center"],
+  vForm.value.validate().then((data: any) => {
+    if (data.valid) {
+      notify({
+        title: "登录成功",
+        text: "欢迎回来!",
+        type: "success",
+      });
+    } else {
+      notify({
+        title: "错误",
+        text: "请填写必要的信息!",
+        type: "error",
+      });
+    }
   });
 };
 </script>

@@ -75,12 +75,11 @@
   </VContainer>
 </template>
 
-<script setup>
-const name = ref("");
+<script setup lang="ts">
+const name = ref<string>("");
 const email = ref("");
 const password = ref("");
 
 const { ruleEmail, rulePassLen, ruleRequired } = useFormRules();
-
 const submit = async () => {};
 </script>

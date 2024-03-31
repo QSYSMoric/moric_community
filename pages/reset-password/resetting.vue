@@ -5,23 +5,38 @@
         <VRow no-gutters align="center" justify="center">
           <VCol cols="12" md="6">
             <h1>重置密码</h1>
-            <p class="text-medium-emphasis">输入你的信息让我们确保是你自己</p>
+            <p class="text-medium-emphasis">输入你的新密码来更新你的信息</p>
 
             <VForm @submit.prevent="submit" class="mt-7" ref="vForm">
               <div class="mt-1">
-                <label class="label text-grey-darken-2" for="email">邮箱</label>
+                <label class="label text-grey-darken-2" for="password">密码</label>
                 <VTextField
-                  :rules="[ruleRequired, ruleEmail]"
-                  v-model="email"
-                  prepend-inner-icon="mdi-email-edit-outline"
-                  id="email"
-                  name="email"
-                  type="email"
+                  :rules="[ruleRequired, rulePassLen]"
+                  v-model="password"
+                  prepend-inner-icon="mdi-lock"
+                  id="password"
+                  name="password"
+                  type="password"
+                  autocomplete
+                />
+              </div>
+              <div class="mt-1">
+                <label class="label text-grey-darken-2" for="passwordConfirmation"
+                  >再次输入密码</label
+                >
+                <VTextField
+                  :rules="[ruleRequired, rulePassLen]"
+                  v-model="passwordConfirmation"
+                  prepend-inner-icon="mdi-lock"
+                  id="passwordConfirmation"
+                  name="passwordConfirmation"
+                  type="password"
+                  autocomplete
                 />
               </div>
               <div class="mt-5">
                 <VBtn type="submit" block min-height="44" class="gradient primary"
-                  >发送重置请求</VBtn
+                  >更新你的密码</VBtn
                 >
               </div>
             </VForm>
@@ -53,20 +68,39 @@
 </template>
 
 <script setup lang="ts">
-import { forgotPassword } from "~/api/user";
-const email = ref("");
-const { ruleEmail, rulePassLen, ruleRequired } = useFormRules();
+import { resetting } from "~/api/user";
+
 const { notify } = useNotification();
+const route = useRoute();
+const router = useRouter();
+const { query } = route;
 const vForm = ref();
+if (!query.code) {
+  notify({
+    title: "错误",
+    text: "无效的重置码",
+    type: "error",
+  });
+  router.replace({
+    path: "/login",
+  });
+}
+const password = ref("");
+const passwordConfirmation = ref("");
+const code: string = query.code as string;
+const { rulePassLen, ruleRequired } = useFormRules();
+
 const submit = async () => {
   vForm.value.validate().then((data: any) => {
-    forgotPassword(email.value).then((data) => {
-      notify({
-        title: "成功",
-        text: "我们已经发送了一条重置密码的邮件到你的邮箱",
-        type: "success",
+    if (data.valid) {
+      resetting(code, password.value, passwordConfirmation.value).then((data) => {
+        notify({
+          title: "成功",
+          text: "重置成功",
+          type: "success",
+        });
       });
-    });
+    }
   });
 };
 </script>

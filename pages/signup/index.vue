@@ -7,13 +7,13 @@
             <h1>注册</h1>
             <p class="text-medium-emphasis">输入您的详细信息以开始</p>
 
-            <VForm @submit.prevent="submit" class="mt-7">
+            <VForm @submit.prevent="submit" class="mt-7" ref="vForm">
               <div>
                 <label class="label text-grey-darken-2" for="name">名字</label>
                 <VTextField
                   :rules="[ruleRequired]"
                   v-model="name"
-                  prepend-inner-icon="fluent:person-24-regular"
+                  prepend-inner-icon="mdi-rename"
                   id="name"
                   name="name"
                   hint="让我们认识你"
@@ -25,7 +25,7 @@
                   :rules="[ruleRequired, ruleEmail]"
                   v-model="email"
                   type="email"
-                  prepend-inner-icon="fluent:mail-24-regular"
+                  prepend-inner-icon="mdi-email-edit-outline"
                   id="email"
                   name="email"
                   hint="让我们联系你"
@@ -37,10 +37,11 @@
                   :rules="[ruleRequired, rulePassLen]"
                   type="password"
                   v-model="password"
-                  prepend-inner-icon="fluent:password-20-regular"
+                  prepend-inner-icon="mdi-lock"
                   id="password"
                   name="password"
                   hint="输入你的密码"
+                  autocomplete
                 />
               </div>
               <div class="mt-5">
@@ -72,14 +73,41 @@
       </VCol>
     </VRow>
   </VContainer>
+  <v-overlay :model-value="overlay" class="align-center justify-center">
+    <v-progress-circular color="light-blue" indeterminate />
+  </v-overlay>
 </template>
 
 <script setup lang="ts">
+import { register } from "~/api/user";
 const name = ref<string>("");
 const email = ref("");
 const password = ref("");
-
+const vForm = ref();
+const overlay = ref(false);
 const { ruleEmail, rulePassLen, ruleRequired } = useFormRules();
-
-const submit = async () => {};
+const { notify } = useNotification();
+const submit = async () => {
+  vForm.value.validate().then((data: any) => {
+    if (data.valid) {
+      register(name.value, email.value, password.value)
+        .then((data) => {
+          notify({
+            title: "注册成功",
+            text: "欢迎你的到来!",
+            type: "success",
+          });
+        })
+        .finally(() => {
+          overlay.value = false;
+        });
+    } else {
+      notify({
+        title: "错误",
+        text: "请填写必要的信息!",
+        type: "error",
+      });
+    }
+  });
+};
 </script>

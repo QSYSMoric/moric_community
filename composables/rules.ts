@@ -7,5 +7,16 @@ export const useFormRules = () => {
       return pattern.test(value) || "确定是正确的邮箱吗";
     },
     rulePassLen: (v: string) => (!!v && v.length >= 6) || "密码必须是大于6位的",
+    ruleFile: (value?: File) => {
+      return !value || !value.length || value.size < 2000000 || "文件大小必须小于 2 MB!";
+    },
+    ruleFiles: (value?: File[]) => {
+      return (
+        !value ||
+        !value.length ||
+        value[0].size < 2000000 ||
+        "Avatar size should be less than 2 MB!"
+      );
+    },
   };
 };

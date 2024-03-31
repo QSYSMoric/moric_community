@@ -1,13 +1,28 @@
 <template>
   <ClientOnly>
-    <v-navigation-drawer :elevation="0" floating :fixed="true" expand-on-hover>
+    <v-navigation-drawer
+      :elevation="0"
+      floating
+      :fixed="true"
+      v-model="drawer.drawer"
+      :rail="drawer.rail"
+      @click="drawer.rail = false"
+    >
       <v-list>
         <v-list-item
-          prepend-avatar="https://randomuser.me/api/portraits/women/85.jpg"
-          subtitle="183957330@qq.com"
-          title="Admin"
+          :prepend-avatar="getFileUrl(me.avatart)"
+          :subtitle="me?.email"
+          :title="me?.username"
           class="cursor-pointer"
-        ></v-list-item>
+        >
+          <template v-slot:append>
+            <v-btn
+              icon="mdi-chevron-left"
+              variant="text"
+              @click.stop="drawer.rail = !drawer.rail"
+            ></v-btn>
+          </template>
+        </v-list-item>
       </v-list>
       <v-divider></v-divider>
       <v-list density="compact" color="primary" nav v-model:selected="selected">
@@ -16,12 +31,14 @@
           title="发现"
           color="primary"
           value="myfiles"
+          @click="go('/')"
         ></v-list-item>
         <v-list-item
           prepend-icon="mdi-draw"
           title="发布"
           color="primary"
           value="shared"
+          @click="go('/creator')"
         ></v-list-item>
         <v-list-item
           prepend-icon="mdi-creation"
@@ -45,22 +62,15 @@
     <template #append>
       <v-btn icon="mdi-heart" color="primary" class="d-md-none d-lg-none"></v-btn>
       <v-btn icon="mdi-magnify" color="primary" class="d-md-none d-lg-none"></v-btn>
-      <v-btn icon="mdi-dots-vertical" color="primary" class="d-md-none d-lg-none"></v-btn>
       <v-menu transition="slide-y-transition" class="shrink">
         <template v-slot:activator="{ props }">
-          <v-btn
-            icon="mdi-chevron-down"
-            color="primary"
-            class="d-none d-md-flex d-xl-flex"
-            title="更多"
-            v-bind="props"
-          ></v-btn>
+          <v-btn :icon="icon" color="primary" title="更多" v-bind="props"></v-btn>
         </template>
         <v-expand-transition>
-          <v-list class="mx-auto bg-secondary">
+          <v-list>
             <v-list-item v-for="(item, i) in items" :key="i">
               <v-list-item-title>
-                <v-btn color="secondary" style="width: 100px">
+                <v-btn color="secondary" size="small" variant="text" @click="item.click" block>
                   {{ item.title }}
                 </v-btn>
               </v-list-item-title>
@@ -84,66 +94,119 @@
       </v-row>
     </VContainer>
   </VAppBar>
-  <VContainer class="community-main" :fluid="true">
-    <v-row justify="center">
-      <VCol :cols="24">
-        <VCard>
-          <v-tabs v-model="tab" align-tabs="end" color="secondary" show-arrows grow>
-            <v-tab :value="1">全部</v-tab>
-            <v-tab :value="2">文章</v-tab>
-            <v-tab :value="3">图文</v-tab>
-            <v-tab :value="4">欸嘿</v-tab>
-          </v-tabs>
-          <v-window v-model="tab">
-            <v-window-item v-for="n in 3" :key="n" :value="n">
-              <v-container fluid>
-                <v-row>
-                  <v-col v-for="i in 6" :key="i" cols="12" md="4">
-                    <v-img
-                      :lazy-src="`https://picsum.photos/10/6?image=${i * n * 5 + 10}`"
-                      :src="`https://picsum.photos/500/300?image=${i * n * 5 + 10}`"
-                      aspect-ratio="1"
-                    ></v-img>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-window-item>
-            <v-window-item :key="4" :value="4">
-              <v-container fluid style="height: 100vh"> dd </v-container>
-            </v-window-item>
-          </v-window>
-        </VCard>
-      </VCol>
-    </v-row>
-  </VContainer>
-  <v-footer name="footer" app>
-    <v-btn class="mx-auto" variant="text" color="primary"> Get data </v-btn>
+  <NuxtPage />
+  <v-footer class="text-center d-flex flex-column">
+    <div>
+      <v-btn v-for="icon in icons" :key="icon" :icon="icon" class="mx-4" variant="text"></v-btn>
+    </div>
+
+    <div class="pt-0">
+      Phasellus feugiat arcu sapien, et iaculis ipsum elementum sit amet. Mauris cursus commodo
+      interdum. Praesent ut risus eget metus luctus accumsan id ultrices nunc. Sed at orci sed massa
+      consectetur dignissim a sit amet dui. Duis commodo vitae velit et faucibus. Morbi vehicula
+      lacinia malesuada. Nulla placerat augue vel ipsum ultrices, cursus iaculis dui sollicitudin.
+      Vestibulum eu ipsum vel diam elementum tempor vel ut orci. Orci varius natoque penatibus et
+      magnis dis parturient montes, nascetur ridiculus mus.
+    </div>
+
+    <v-divider></v-divider>
+
+    <div>{{ new Date().getFullYear() }} — <strong>Vuetify</strong></div>
   </v-footer>
 </template>
 
 <script setup lang="ts">
+import type { Me } from "@/type/index";
 const media = useMedia();
-const { smAndUp } = media;
+const routeMap = new Map([
+  ["/", "myfiles"],
+  ["/creator", "shared"],
+]);
+const { smAndUp, name } = media;
+const mySelf = useMystore();
+const router = useRouter();
+const route = useRoute();
+const me = ref<Me>({
+  username: "请先登录",
+  id: -1,
+  email: void 0,
+  provider: "",
+  confirmed: false,
+  uuid: "",
+  phone: -1,
+  sex: "",
+  age: -1,
+  avatart: void 0,
+});
+mySelf.getUserInforAsync().then((data: Me | undefined) => {
+  if (data) me.value = data;
+});
+const icon = computed(() => {
+  switch (name.value) {
+    case "xs":
+      return "mdi-dots-vertical";
+    case "sm":
+      return "mdi-dots-vertical";
+    case "md":
+      return "mdi-chevron-down";
+    case "lg":
+      return "mdi-chevron-down";
+    case "xl":
+      return "mdi-chevron-down";
+    case "xxl":
+      return "mdi-chevron-down";
+  }
+  return undefined;
+});
 const selected = ref<string[]>(["myfiles"]);
-const tab = ref<string>();
-const items = ref([
+const drawer = ref({
+  drawer: true,
+  rail: false,
+});
+const items = ref<
   {
-    title: "选择",
+    title: string;
+    value: string;
+    click: () => void;
+  }[]
+>([
+  {
+    title: "个人中心",
     value: "1",
+    click: () => {
+      router.replace({
+        path: "/login",
+      });
+    },
   },
   {
-    title: "选择",
-    value: "1",
-  },
-  {
-    title: "选择",
-    value: "1",
-  },
-  {
-    title: "选择",
-    value: "1",
+    title: "退出登录",
+    value: "2",
+    click: () => {
+      mySelf.logOut();
+      router.replace({
+        path: "/login",
+      });
+    },
   },
 ]);
+//切换路由
+let selectIndex = getRouteByNumber(route.path, 1);
+if (selectIndex) {
+  selected.value = [routeMap.get(selectIndex)!];
+}
+
+/**
+ * @descripttion:tab切换
+ * @param {*} url
+ * @return {*}
+ */
+function go(url: string): void {
+  router.replace({
+    path: url,
+  });
+}
+const icons = ref(["mdi-facebook", "mdi-twitter", "mdi-linkedin", "mdi-instagram"]);
 </script>
 <style lang="scss">
 .clear-init {
@@ -154,5 +217,11 @@ const items = ref([
 .community-main {
   min-height: 800px;
   padding: 20px;
+}
+.v-card--reveal {
+  bottom: 0;
+  opacity: 1 !important;
+  position: absolute !important;
+  width: 100%;
 }
 </style>

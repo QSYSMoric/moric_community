@@ -4,6 +4,7 @@ type FetchType = typeof $fetch;
 type ReqType = Parameters<FetchType>[0];
 type FetchOptions = Parameters<FetchType>[1];
 const { notify } = useNotification();
+
 export function httpRequest<T = unknown>(
   method: any,
   url: ReqType,
@@ -13,11 +14,11 @@ export function httpRequest<T = unknown>(
   const token = useCookie("token");
   const router = useRouter();
   const route = useRoute();
-
+  const baseURL = useRuntimeConfig().public.api_url;
   const defaultOpts = {
     method,
-    // baseURL: '/api',
-    headers: { token: token.value } as any,
+    baseURL,
+    headers: token.value ? ({ Authorization: "Bearer " + token.value } as any) : null,
     onRequestError() {
       notify({
         text: "请求出错，请重试！",
@@ -52,10 +53,10 @@ export function httpRequest<T = unknown>(
           });
           break;
         case 500:
-          notify({
-            text: "服务器故障",
-            type: "error",
-          });
+          // notify({
+          //   text: "服务器验证出错",
+          //   type: "error",
+          // });
           break;
         default:
           notify({
@@ -66,6 +67,7 @@ export function httpRequest<T = unknown>(
       }
     },
   } as FetchOptions;
+
   if (defaultOpts) {
     if (method === "post") defaultOpts.body = bodyOrParams;
     else defaultOpts.params = bodyOrParams;

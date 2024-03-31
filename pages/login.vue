@@ -13,7 +13,7 @@
                 <VTextField
                   :rules="[ruleRequired, ruleEmail]"
                   v-model="email"
-                  prepend-inner-icon="fluent:mail-24-regular"
+                  prepend-inner-icon="mdi-email-edit-outline"
                   id="email"
                   name="email"
                   type="email"
@@ -24,12 +24,12 @@
                 <VTextField
                   :rules="[ruleRequired, rulePassLen]"
                   v-model="password"
-                  prepend-inner-icon="fluent:password-20-regular"
+                  prepend-inner-icon="mdi-lock"
                   id="password"
                   name="password"
                   type="password"
                   hint="输入你的密码"
-                  autocomplete="off"
+                  autocomplete
                 />
               </div>
               <div class="mt-5">
@@ -66,30 +66,39 @@
       </VCol>
     </VRow>
   </VContainer>
+  <v-overlay :model-value="overlay" class="align-center justify-center">
+    <v-progress-circular color="light-blue" indeterminate />
+  </v-overlay>
 </template>
 
 <script setup lang="ts">
+import { login } from "~/api/user";
+
 const email = ref<string>("");
 const password = ref<string>("");
+const router = useRouter();
 const { notify } = useNotification();
 const { ruleEmail, rulePassLen, ruleRequired } = useFormRules();
-/**
- * @descripttion:表单
- * @return {*}
- */
-interface UserInputMsg {
-  email: string;
-  password: string;
-}
 const vForm = ref();
+const overlay = ref(false);
 const submit = async () => {
   vForm.value.validate().then((data: any) => {
     if (data.valid) {
-      notify({
-        title: "登录成功",
-        text: "欢迎回来!",
-        type: "success",
-      });
+      login(email.value, password.value)
+        .then((data) => {
+          notify({
+            title: "登录成功",
+            text: "欢迎回来!",
+            type: "success",
+          });
+          overlay.value = false;
+          router.replace({
+            path: "/",
+          });
+        })
+        .finally(() => {
+          overlay.value = false;
+        });
     } else {
       notify({
         title: "错误",

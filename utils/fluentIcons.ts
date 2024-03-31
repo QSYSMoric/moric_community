@@ -39,6 +39,7 @@ const fluentAliases: IconAliases = {
   minus: "fluent:subtract-24-regular",
   sortAsc: "fluent:arrow-sort-up-24-regular",
   sortDesc: "fluent:arrow-sort-down-24-regular",
+  calendar: undefined,
 };
 
 const fluentCustom: IconSet = {

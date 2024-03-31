@@ -6,6 +6,7 @@ const shortTitle = "Vuetify 3 + Nuxt 3 Starter";
 const description = "Template to get you up and running with Nuxt 3 & Vuetify 3";
 const image = "https://vuetify3nuxt3starter.behonbaker.com/starter.png";
 const url = "https://vuetify3nuxt3starter.behonbaker.com/";
+console.log(process.env.API_ORGIN);
 
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
@@ -25,8 +26,25 @@ export default defineNuxtConfig({
     },
     "nuxt3-notifications",
     "@nuxtjs/svg-sprite",
+    [
+      "@pinia/nuxt",
+      {
+        autoImports: [
+          // 自动引入 `defineStore()`
+          "defineStore",
+          // 自动引入 `defineStore()` 并重命名为 `definePiniaStore()`
+          ["defineStore", "definePiniaStore"],
+        ],
+      },
+    ],
+    "dayjs-nuxt",
   ],
-
+  runtimeConfig: {
+    public: {
+      api_url: process.env.API_ORGIN,
+      file_url: process.env.File_ORGIN,
+    },
+  },
   // imports: {
   //   presets: [
   //     {
@@ -118,4 +136,19 @@ export default defineNuxtConfig({
       description: description,
     },
   },
+  // nitro: {
+  //   devProxy: {
+  //     "/api": {
+  //       target: "http://localhost:1337/api",
+  //       changeOrigin: true,
+  //       prependPath: true,
+  //     },
+  //   },
+  //   // 该配置用于服务端请求转发
+  //   routeRules: {
+  //     "/api/**": {
+  //       proxy: "http://localhost:1337/api",
+  //     },
+  //   },
+  // },
 });

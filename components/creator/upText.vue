@@ -128,7 +128,7 @@
 
 <script setup lang="ts">
 import type { Optionlist, Trend } from "@/type/index";
-import { upTrends } from "@/api/user";
+import { upTrends } from "@/api/index";
 const { notify } = useNotification();
 const my = useMystore();
 const subLoading = ref<boolean>(false);

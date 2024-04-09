@@ -1,5 +1,6 @@
 import type { FileObj } from "~/type";
 import { v4 as uuidv4 } from "uuid";
+import { upFile } from "@/api";
 
 /**
  * @descripttion:文件对象
@@ -22,13 +23,15 @@ class FileUploader {
    * @descripttion: 实际的上传方法
    * @return {*}
    */
-  async upload(): Promise<any> {
+  async upload(): Promise<FileObj | undefined> {
     // 模拟上传操作
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        this.isUp = true; // 标记上传完成
-        resolve("上传成功");
-      }, 1000); // 模拟上传耗时
+    return new Promise(async (resolve, reject) => {
+      if (this.raw && !this.isUp) {
+        let data = await upFile(this.raw);
+        resolve(data[0]);
+      } else {
+        resolve(void 0);
+      }
     });
   }
 }
@@ -38,7 +41,7 @@ class FileUploader {
  * @return {*}
  */
 export class UploadFileCommand {
-  receiver: FileUploader[];
+  public receiver: FileUploader[];
 
   constructor(receiver: File[]) {
     this.receiver = receiver.map((element) => {

@@ -91,9 +91,21 @@ export interface PostRequest {
     id: number;
     attributes: any;
   };
+  meta: any;
 }
 
-export interface Request<T> {
+export interface Request<T, X> {
   data: T;
-  meta: any;
+  meta?: X;
+}
+
+/**
+ * @descripttion: 分页
+ * @return {*}
+ */
+export interface Pagination {
+  page: number;
+  pageSize: number;
+  pageCount: number;
+  total: string;
 }

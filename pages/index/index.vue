@@ -14,7 +14,7 @@
               <IndexHomeRecommend />
             </v-window-item>
             <v-window-item :value="2">
-              <IndexHomeArticle />
+              <IndexHomeTrends />
             </v-window-item>
             <v-window-item :value="3">
               <IndexHomeImageText />

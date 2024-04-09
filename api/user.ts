@@ -1,4 +1,4 @@
-import type { Action, LoginResponse, Me, Articleslist, Trend, PostRequest } from "~/type";
+import type { Action, LoginResponse, Me, Articleslist, Trend, PostRequest, Article } from "~/type";
 import qs from "qs";
 const { notify } = useNotification();
 /**
@@ -183,7 +183,28 @@ export async function upTrends(trend: Trend, user: number): Promise<PostRequest>
     });
     return response;
   } catch (error) {
-    // 处理注册失败逻辑
+    notify({
+      text: "未知错误",
+      type: "error",
+    });
+    throw error;
+  }
+}
+
+/**
+ * @descripttion: 发布文章
+ * @param {Article} articles
+ * @param {number} user
+ * @return {*}
+ */
+export async function upArticles(articles: Article, user: number): Promise<PostRequest> {
+  try {
+    articles.publisher = user;
+    const response = await httpPost<PostRequest>("/articles", {
+      data: articles,
+    });
+    return response;
+  } catch (error) {
     notify({
       text: "未知错误",
       type: "error",

@@ -3,7 +3,7 @@
     <v-row>
       <v-col cols="12">
         <v-sheet class="mx-auto pa-2 pt-6">
-          <v-sheet width="max-content" class="pa-1 rounded text-body-2"> 今日推荐 </v-sheet>
+          <v-sheet width="max-content" class="pa-1 rounded text-body-2"> 今日推荐话题 </v-sheet>
           <v-slide-group v-model="model" class="pa-4" selected-class="bg-primary" show-arrows>
             <v-slide-group-item
               v-for="n in 15"
@@ -128,6 +128,8 @@
 </template>
 
 <script setup lang="ts">
+import { getHomeArticles } from "@/api/index";
+getHomeArticles();
 const reveal = ref<boolean>(false);
 const model = ref(1);
 </script>

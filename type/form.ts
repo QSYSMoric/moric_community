@@ -1,6 +1,6 @@
-import { extend } from "lodash";
 import type { FileObj } from "./api";
 import type { Labels } from "./config";
+
 /**
  * @descripttion:动态列表
  * @return {*}
@@ -35,4 +35,15 @@ export interface Form<T> {
   receiver: T;
   actions?: any;
   execute: () => void;
+}
+
+/**
+ * @descripttion: 评论
+ * @return {*}
+ */
+export interface Comment {
+  content: string;
+  article?: number;
+  users_permissions_user?: number;
+  trends?: number;
 }

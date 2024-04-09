@@ -1,5 +1,5 @@
 <template>
-  <v-card min-height="400" class="pa-4 trends">
+  <v-card min-height="400" class="pa-4 upArticle">
     <v-container class="ma-0 pa-0 trends-content">
       <v-row>
         <v-col cols="12" sm="6">
@@ -114,7 +114,15 @@
             </v-img>
 
             <v-card-actions>
-              <v-btn color="primary">阅读</v-btn>
+              <v-btn
+                color="primary"
+                @click="
+                  () => {
+                    articleShow = true;
+                  }
+                "
+                >阅读</v-btn
+              >
               <!-- mdi-pound -->
               <v-btn
                 variant="text"
@@ -137,18 +145,160 @@
       </v-row>
     </v-container>
   </v-card>
+  <v-overlay
+    v-model="overlay"
+    class="align-center justify-center"
+    hide-overlay
+    close-on-content-click
+    :opacity="0.4"
+    persistent
+    disabled
+  >
+    <v-progress-circular color="indigo" size="32" indeterminate />
+  </v-overlay>
+  <v-overlay
+    v-model="articleShow"
+    hide-overlay
+    :opacity="0.4"
+    persistent
+    disabled
+    width="100vw"
+    height="100vh"
+    content-class="align-center"
+    :absolute="false"
+  >
+    <v-sheet class="mx-auto rounded-lg" width="70vw" min-height="90vh">
+      <v-container style="height: 100%" class="pa-0">
+        <v-row style="height: 100%" class="ma-0">
+          <v-col cols="7">
+            <v-carousel hide-delimiters height="90vh" progress="primary">
+              <v-carousel-item
+                v-for="item of imgsFiledCommand.receiver"
+                :src="item.url"
+                cover
+                :key="item.id"
+              ></v-carousel-item>
+            </v-carousel>
+          </v-col>
+          <v-col cols="5" class="pa-0">
+            <v-card variant="flat" :subtitle="now" :title="my.getMe.username">
+              <template v-slot:prepend>
+                <v-avatar color="blue-darken-2">
+                  <v-img :src="getFileUrl(my.getMe.avatart)"></v-img>
+                </v-avatar>
+              </template>
+              <template v-slot:append>
+                <v-btn
+                  icon="$close"
+                  color="primary"
+                  variant="text"
+                  @click="
+                    () => {
+                      articleShow = false;
+                    }
+                  "
+                ></v-btn>
+              </template>
+              <v-card-title>{{ articleForm.receiver.title }} </v-card-title>
+              <v-card-text> {{ articleForm.receiver.content }} </v-card-text>
+              <v-card-actions>
+                <v-btn
+                  variant="text"
+                  color="primary"
+                  prepend-icon="mdi-pound"
+                  v-if="articleForm.receiver.classification"
+                >
+                  {{ articleForm.receiver.classification.attributes.title }}
+                </v-btn>
+                <v-btn
+                  class="mx-1"
+                  prepend-icon="mdi-map-marker-outline"
+                  color="primary"
+                  variant="text"
+                >
+                  上海
+                </v-btn>
+                <v-spacer></v-spacer>
+                <v-btn color="orange-lighten-2" variant="text"> 展开评论 </v-btn>
+                <v-btn
+                  :icon="show ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+                  @click="show = !show"
+                ></v-btn>
+              </v-card-actions>
+              <v-expand-transition>
+                <div v-show="show">
+                  <v-divider></v-divider>
+                  <v-card
+                    class="me-1 comment"
+                    variant="flat"
+                    :title="my.getMe.username"
+                    :subtitle="now"
+                  >
+                    <template v-slot:prepend>
+                      <v-avatar color="blue-darken-2" :size="32">
+                        <v-img
+                          :src="getFileUrl(my.getMe.avatart)"
+                          aspect-ratio="1"
+                          class="bg-grey-lighten-2"
+                          cover
+                        >
+                          <template v-slot:placeholder>
+                            <v-row align="center" class="fill-height ma-0" justify="center">
+                              <v-progress-circular
+                                color="grey-lighten-5"
+                                indeterminate
+                              ></v-progress-circular>
+                            </v-row>
+                          </template>
+                        </v-img>
+                      </v-avatar>
+                    </template>
+                    <template v-slot:append>
+                      <v-chip class="fs-sm"> 作者 </v-chip>
+                    </template>
+
+                    <v-card-text> 这是一条评论 </v-card-text>
+                    <v-card-actions class="px-4" color="primary">
+                      {{ now_ }}
+                      <v-btn
+                        class="mx-1"
+                        prepend-icon="mdi-map-marker-outline"
+                        color="primary"
+                        variant="text"
+                      >
+                        上海
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </div>
+              </v-expand-transition>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-sheet>
+  </v-overlay>
 </template>
 
 <script setup lang="ts">
-import type { Classification, Labels, Article, Form } from "@/type/index";
+import type { Classification, Labels, Article, Form, FileObj } from "@/type/index";
 import { UploadFileCommand } from "@/class/UploadFileCommand";
+import { upArticles } from "@/api/index";
 const my = useMystore();
+const { notify } = useNotification();
 const config = useConfigstore();
 const coverFile = ref<File[]>([]);
 const imgFiles = ref<File[]>([]);
-const coverTempUrl = ref<string>("https://cdn.vuetifyjs.com/images/cards/house.jpg");
-let coverFiledCommand: UploadFileCommand = new UploadFileCommand([]);
-let imgsFiledCommand: UploadFileCommand = new UploadFileCommand([]);
+const show = ref(false);
+const dayjs = useDayjs();
+let now = dayjs().format("YYYY-MM-DD HH:mm");
+let now_ = dayjs().format("YYYY-MM-DD");
+const overlay = ref(false);
+const articleShow = ref<boolean>(false);
+const coverTempUrl = ref<string>("/imgs/defaut.png");
+let coverFiledCommand: Ref<UploadFileCommand> = ref(new UploadFileCommand([]));
+let imgsFiledCommand: Ref<UploadFileCommand> = ref(new UploadFileCommand([]));
+
 /**
  * @descripttion: 分类列表
  * @return {*}
@@ -171,9 +321,9 @@ const classificationProps = function (item: Classification) {
  * @return {*}
  */
 function setCoverFiles(files: File[]): void {
-  coverFiledCommand = new UploadFileCommand(files);
+  coverFiledCommand.value = new UploadFileCommand(files);
   if (files.length) {
-    coverTempUrl.value = coverFiledCommand.receiver[0].url!;
+    coverTempUrl.value = coverFiledCommand.value.receiver[0].url!;
   } else {
     coverTempUrl.value = "https://cdn.vuetifyjs.com/images/cards/house.jpg";
   }
@@ -185,7 +335,7 @@ function setCoverFiles(files: File[]): void {
  * @return {*}
  */
 function setImgsFiles(files: File[]): void {
-  imgsFiledCommand = new UploadFileCommand(files);
+  imgsFiledCommand.value = new UploadFileCommand(files);
 }
 
 /**
@@ -203,7 +353,13 @@ const articleForm = ref<Form<Article>>({
     cover: [],
   },
   execute: function (): void {
-    console.log("表单提交成功");
+    let id = my.getMe.id;
+    upArticles(this.receiver, id).then((data) => {
+      notify({
+        text: "发布成功",
+        type: "success",
+      });
+    });
   },
 });
 
@@ -270,10 +426,17 @@ config.getClassification().then((data: Classification[]) => {
  * @return {*}
  */
 function submit(): void {
-  Promise.all([coverFiledCommand.execute(), imgsFiledCommand.execute()]).then((data) => {
-    console.log(2);
-    articleForm.value.execute();
-  });
+  overlay.value = true;
+  Promise.all([coverFiledCommand.value.execute(), imgsFiledCommand.value.execute()]).then(
+    (data) => {
+      const coverArray = data[0].filter((element: FileObj) => element !== undefined);
+      const imgsArray = data[1].filter((element: FileObj) => element !== undefined);
+      articleForm.value.receiver.cover = coverArray;
+      articleForm.value.receiver.imgs = imgsArray;
+      articleForm.value.execute();
+      overlay.value = false;
+    }
+  );
 }
 </script>
 <style lang="scss">
@@ -284,5 +447,13 @@ function submit(): void {
       min-height: 400px;
     }
   }
+}
+.article {
+  max-width: 600px;
+  max-height: 400px;
+}
+.align-center {
+  display: flex;
+  align-items: center;
 }
 </style>

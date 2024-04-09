@@ -112,3 +112,53 @@ a {
     ) !important;
   }
 }
+
+$align: (left, right, center);
+
+@each $value in $align {
+  // text align
+  .text-#{$value} {
+    text-align: $value;
+  }
+}
+// 基本字体大小
+$base-font-size: 1rem;
+// 字体大小的倍数规格
+$font-sizes: (
+  xs: 0.5,
+  sm: 0.75,
+  md: 1,
+  lg: 1.25,
+  xl: 1.5
+);
+
+@each $sizeKey, $size in $font-sizes {
+  // font size
+  .fs-#{$sizeKey} {
+    font-size: $size * $base-font-size;
+  }
+}
+
+.comment{
+  --v-avatar-height:32px;
+
+  .v-card-item{
+    height: max-content;
+    .v-card-title{
+      font-size: 1rem;
+      line-height:1em;
+    }
+    .v-card-item__content{
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+  }
+  .v-card-actions{
+    font-size: 0.8rem;
+  }
+  .v-card-subtitle{
+    font-size: 0.725rem;
+    padding-bottom: 0 !important;
+  }
+}

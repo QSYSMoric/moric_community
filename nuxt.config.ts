@@ -1,5 +1,5 @@
 import vuetify from "vite-plugin-vuetify";
-
+import { presetUno } from "unocss";
 // PWA Config
 const title = "Vuetify 3 + Nuxt 3 Starter";
 const shortTitle = "Vuetify 3 + Nuxt 3 Starter";
@@ -38,12 +38,16 @@ export default defineNuxtConfig({
       },
     ],
     "dayjs-nuxt",
+    "@unocss/nuxt",
   ],
   runtimeConfig: {
     public: {
       api_url: process.env.API_ORGIN,
       file_url: process.env.File_ORGIN,
     },
+  },
+  unocss: {
+    presets: [presetUno()],
   },
   // imports: {
   //   presets: [

@@ -43,6 +43,7 @@ export interface FileObj {
     small: File;
     medium: File;
     thumbnail: File;
+    large: File;
   };
 }
 
@@ -86,10 +87,10 @@ export interface Articleslist {
  * @descripttion:请求返回体
  * @return {*}
  */
-export interface PostRequest {
+export interface PostRequest<T> {
   data: {
     id: number;
-    attributes: any;
+    attributes?: T;
   };
   meta: any;
 }

@@ -4,22 +4,18 @@
       <VCol :cols="12">
         <VCard border="0">
           <v-tabs v-model="tab" align-tabs="end" color="secondary" class="pb-1" show-arrows grow>
-            <v-tab :value="1">综合</v-tab>
-            <v-tab :value="2">文章</v-tab>
-            <v-tab :value="3">图文</v-tab>
-            <v-tab :value="4">发现朋友</v-tab>
+            <v-tab :value="1">文章</v-tab>
+            <v-tab :value="2">动态</v-tab>
+            <v-tab :value="3">发现朋友</v-tab>
           </v-tabs>
           <v-window v-model="tab">
             <v-window-item :value="1">
-              <IndexHomeRecommend />
+              <IndexHomeImageText />
             </v-window-item>
             <v-window-item :value="2">
               <IndexHomeTrends />
             </v-window-item>
-            <v-window-item :value="3">
-              <IndexHomeImageText />
-            </v-window-item>
-            <v-window-item :key="4" :value="4">
+            <v-window-item :key="3" :value="3">
               <v-container fluid style="height: 100vh"> dd </v-container>
             </v-window-item>
           </v-window>
@@ -27,6 +23,7 @@
       </VCol>
     </v-row>
   </VContainer>
+  <NuxtPage />
 </template>
 
 <script setup lang="ts">

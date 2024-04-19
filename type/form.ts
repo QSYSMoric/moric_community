@@ -45,5 +45,5 @@ export interface Comment {
   content: string;
   article?: number;
   users_permissions_user?: number;
-  trends?: number;
+  trend?: number;
 }

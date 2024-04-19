@@ -17,7 +17,7 @@ export async function getConfig(): Promise<Classification[]> {
         encodeValuesOnly: true, // prettify URL
       }
     );
-    const response = await httpGet<Request<Classification[]>>("/classifications?" + query);
+    const response = await httpGet<Request<Classification[], any>>("/classifications?" + query);
     return response.data;
   } catch (error) {
     notify({

@@ -23,6 +23,33 @@ export interface ArticleHome {
 }
 
 /**
+ * @descripttion: 评论
+ * @return {*}
+ */
+export interface Comment_cs {
+  id: number;
+  attributes: {
+    content: string;
+    createdAt: string;
+    updatedAt: string;
+    users_permissions_user: {
+      data: {
+        id: number;
+        attributes: {
+          username: string;
+          avatart: {
+            id: number;
+            data: {
+              attributes: FileObj;
+            };
+          };
+        };
+      };
+    };
+  };
+}
+
+/**
  * @descripttion: 动态列表
  * @return {*}
  */
@@ -48,27 +75,80 @@ export interface TrendHome {
       };
     };
     comment_cs: {
+      data: Comment_cs[];
+    };
+  };
+}
+
+/**
+ * @descripttion: 文章列表
+ * @return {*}
+ */
+export interface ArticleHomeList {
+  id: number;
+  attributes: {
+    title: string;
+    introduction: string;
+    createdAt: string;
+    publisher: {
       data: {
         id: number;
         attributes: {
-          content: string;
-          createdAt: string;
-          updatedAt: string;
-          users_permissions_user: {
+          username: string;
+          avatart: {
+            id: number;
             data: {
-              id: number;
-              attributes: {
-                username: string;
-                avatart: {
-                  id: number;
-                  data: {
-                    attributes: FileObj;
-                  };
-                };
-              };
+              attributes: FileObj;
             };
           };
         };
+      };
+    };
+    cover: {
+      data: {
+        id: number;
+        attributes: FileObj;
+      };
+    };
+  };
+}
+
+/**
+ * @descripttion: 文章详细信息
+ * @return {*}
+ */
+export interface ArticleInfo {
+  id: number;
+  attributes: {
+    title: string;
+    introduction: string;
+    createdAt: string;
+    publisher: {
+      data: {
+        id: number;
+        attributes: {
+          username: string;
+          avatart: {
+            id: number;
+            data: {
+              attributes: FileObj;
+            };
+          };
+        };
+      };
+    };
+    cover: {
+      data: {
+        id: number;
+        data: {
+          attributes: FileObj;
+        };
+      };
+    };
+    imgs: {
+      data: {
+        id: number;
+        attributes: FileObj;
       }[];
     };
   };

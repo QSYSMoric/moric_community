@@ -3,9 +3,8 @@
     <v-row>
       <v-col :cols="9">
         <v-list>
-          <v-list-item v-for="(item, index) of trends" :key="index">
+          <v-list-item v-for="(item, index) of trends" class="mb-4" :key="index">
             <v-card
-              class="mx-auto"
               :subtitle="getTime(item.trend.attributes.updatedAt)"
               :title="item.trend.attributes.title"
               transition="scroll-y-reverse-transition"
@@ -84,13 +83,39 @@
                       "
                     ></v-text-field>
                   </v-sheet>
-                  <v-list :items="itemTT" lines="three" item-props>
-                    <template #append>
-                      <p class="text-disabled text-body-2">2024.1.1</p>
-                    </template>
-                    <template v-slot:subtitle="{ subtitle }">
-                      <div v-html="subtitle"></div>
-                    </template>
+                  <v-list lines="two">
+                    <v-list-subheader>最新评论</v-list-subheader>
+                    <v-sheet
+                      v-for="commont of item.trend.attributes.comment_cs.data"
+                      :key="commont.id"
+                    >
+                      <v-list-item
+                        :title="commont.attributes.users_permissions_user.data.attributes.username"
+                      >
+                        <template #prepend>
+                          <v-avatar :size="32">
+                            <v-img
+                              cover
+                              :src="
+                                getFileUrl(
+                                  commont.attributes.users_permissions_user.data.attributes.avatart
+                                    .data.attributes
+                                )
+                              "
+                            ></v-img>
+                          </v-avatar>
+                        </template>
+                        <template #append>
+                          <v-list-item-action class="text-body-2 text-medium-emphasis">
+                            {{ getTime(commont.attributes.updatedAt) }}
+                          </v-list-item-action>
+                        </template>
+                        <v-sheet>
+                          {{ commont.attributes.content }}
+                        </v-sheet>
+                      </v-list-item>
+                      <v-divider inset></v-divider>
+                    </v-sheet>
                   </v-list>
                 </div>
               </v-expand-transition>
@@ -141,9 +166,12 @@
 
 <script setup lang="ts">
 import { getHomeTrends } from "@/api/index";
-import type { TrendHome } from "@/type/home";
+import type { TrendHome, Comment_cs } from "@/type/index";
 import { Trend } from "@/class/Trend";
 
+const classificationProps = function (item: Comment_cs) {
+  return {};
+};
 const comment = ref<string>();
 const trends = ref<Trend[]>([]);
 const items = ref([
@@ -151,41 +179,6 @@ const items = ref([
   { text: "Audience", icon: "mdi-account" },
   { text: "Conversions", icon: "mdi-flag" },
 ]);
-const itemTT = [
-  { type: "subheader", title: "最新评论" },
-  {
-    prependAvatar: "https://cdn.vuetifyjs.com/images/lists/1.jpg",
-    title: "Brunch this weekend?",
-    subtitle: `<span class="text-primary">Ali Connors</span> &mdash; I'll be in your neighborhood doing errands this weekend. Do you want to hang out?`,
-  },
-  { type: "divider", inset: true },
-  {
-    prependAvatar: "https://cdn.vuetifyjs.com/images/lists/2.jpg",
-    title: "Summer BBQ",
-    subtitle: `<span class="text-primary">to Alex, Scott, Jennifer</span> &mdash; Wish I could come, but I'm out of town this weekend.`,
-  },
-  { type: "divider", inset: true },
-  {
-    prependAvatar: "https://cdn.vuetifyjs.com/images/lists/3.jpg",
-    title: "Oui oui",
-    subtitle:
-      '<span class="text-primary">Sandra Adams</span> &mdash; Do you have Paris recommendations? Have you ever been?',
-  },
-  { type: "divider", inset: true },
-  {
-    prependAvatar: "https://cdn.vuetifyjs.com/images/lists/4.jpg",
-    title: "Birthday gift",
-    subtitle:
-      '<span class="text-primary">Trevor Hansen</span> &mdash; Have any ideas about what we should get Heidi for her birthday?',
-  },
-  { type: "divider", inset: true },
-  {
-    prependAvatar: "https://cdn.vuetifyjs.com/images/lists/5.jpg",
-    title: "Recipe to try",
-    subtitle:
-      '<span class="text-primary">Britta Holt</span> &mdash; We should eat this: Grate, Squash, Corn, and tomatillo Tacos.',
-  },
-];
 getHomeTrends().then((data) => {
   trends.value = data.data.map((element: TrendHome) => {
     return new Trend(element);
@@ -195,5 +188,8 @@ getHomeTrends().then((data) => {
 <style lang="scss">
 .home-article {
   min-height: 100vh;
+  .v-list-item__content {
+    overflow: visible;
+  }
 }
 </style>

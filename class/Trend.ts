@@ -1,4 +1,4 @@
-import type { TrendHome } from "~/type";
+import type { TrendHome, Comment_cs } from "~/type";
 import { LikeCommand, BookmarkCommand } from "@/class/TrendCommand";
 import { postComments } from "@/api";
 const { notify } = useNotification();
@@ -28,11 +28,20 @@ export class Trend {
     this.doYouWantToOpenComments = !this.doYouWantToOpenComments;
   }
 
-  likeDo() {
+  /**
+   * @descripttion: 点赞
+   * @return {*}
+   */
+  likeDo(): void {
     this.like.execute();
   }
 
-  commentDo(text?: string) {
+  /**
+   * @descripttion:评论
+   * @param {string} text
+   * @return {*}
+   */
+  commentDo(text?: string): void {
     const me = useMystore();
     if (!text) {
       notify({
@@ -44,9 +53,29 @@ export class Trend {
     }
     postComments({
       content: text,
-      trends: this.trend.id,
+      trend: this.trend.id,
       users_permissions_user: me.getMe.id,
     }).then((data) => {
+      this.trend.attributes.comment_cs.data.unshift({
+        id: data.data.id,
+        attributes: {
+          ...data.data.attributes!,
+          users_permissions_user: {
+            data: {
+              id: me.getMe.id,
+              attributes: {
+                username: me.getMe.username,
+                avatart: {
+                  id: me.getMe.avatart?.id!,
+                  data: {
+                    attributes: me.getMe.avatart!,
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
       notify({
         title: "成功",
         text: "发布成功",
@@ -55,7 +84,18 @@ export class Trend {
     });
   }
 
-  bookmarkDo() {
+  /**
+   * @descripttion:收藏
+   * @return {*}
+   */
+  bookmarkDo(): void {
     this.bookmark.execute();
+  }
+  /**
+   * @descripttion: 获取评论列表
+   * @return {*}
+   */
+  getComment_cs(): Comment_cs[] {
+    return this.trend.attributes.comment_cs.data;
   }
 }

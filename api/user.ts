@@ -175,10 +175,10 @@ export async function getPublishedArticles(): Promise<Articleslist[]> {
  * @param {number} user
  * @return {*}
  */
-export async function upTrends(trend: Trend, user: number): Promise<PostRequest> {
+export async function upTrends(trend: Trend, user: number): Promise<PostRequest<any>> {
   try {
     trend.users_permissions_user = user;
-    const response = await httpPost<PostRequest>("/trends", {
+    const response = await httpPost<PostRequest<any>>("/trends", {
       data: trend,
     });
     return response;
@@ -197,10 +197,10 @@ export async function upTrends(trend: Trend, user: number): Promise<PostRequest>
  * @param {number} user
  * @return {*}
  */
-export async function upArticles(articles: Article, user: number): Promise<PostRequest> {
+export async function upArticles(articles: Article, user: number): Promise<PostRequest<any>> {
   try {
     articles.publisher = user;
-    const response = await httpPost<PostRequest>("/articles", {
+    const response = await httpPost<PostRequest<any>>("/articles", {
       data: articles,
     });
     return response;

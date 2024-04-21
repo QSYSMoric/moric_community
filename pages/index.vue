@@ -47,6 +47,13 @@
           value="starred"
         ></v-list-item>
       </v-list>
+      <v-spacer></v-spacer>
+
+      <template v-slot:append>
+        <div class="pa-2">
+          <v-btn variant="tonal" color="primary" @click="toggleTheme" block>切换主题</v-btn>
+        </div>
+      </template>
     </v-navigation-drawer>
   </ClientOnly>
   <VAppBar :elevation="0" :order="0" border :floating="true" position="sticky">
@@ -58,10 +65,12 @@
         <VAvatar color="teal-darken-4"> 青 </VAvatar>
       </v-app-bar-nav-icon>
     </template>
+
     <v-app-bar-title v-if="!smAndUp">小青社</v-app-bar-title>
     <template #append>
       <v-btn icon="mdi-heart" color="primary" class="d-md-none d-lg-none"></v-btn>
       <v-btn icon="mdi-magnify" color="primary" class="d-md-none d-lg-none"></v-btn>
+
       <v-menu transition="slide-y-transition" class="shrink">
         <template v-slot:activator="{ props }">
           <v-btn :icon="icon" color="primary" title="更多" v-bind="props"></v-btn>
@@ -110,6 +119,26 @@
 
 <script setup lang="ts">
 import type { Me } from "@/type/index";
+import { useTheme } from "vuetify";
+
+const nuxtApp = useNuxtApp();
+const theme = useTheme();
+
+function toggleTheme() {
+  theme.global.name.value = theme.global.current.value.dark ? "light" : "dark";
+}
+
+const alignment = ref(true);
+
+watch(
+  () => {
+    return alignment.value;
+  },
+  () => {
+    toggleTheme();
+  }
+);
+
 const media = useMedia();
 const routeMap = new Map([
   ["/", "myfiles"],
@@ -203,6 +232,11 @@ const icons = ref(["mdi-facebook", "mdi-twitter", "mdi-linkedin", "mdi-instagram
 </script>
 <style lang="scss">
 .clear-init {
+  .v-input__details {
+    display: none;
+  }
+}
+.no_v-input_details {
   .v-input__details {
     display: none;
   }

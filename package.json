@@ -65,7 +65,7 @@
     "vue-overflow-ellipsis": "^1.0.7",
     "vue-waterfall-plugin-next": "^2.4.3",
     "vue3-text-clamp": "^0.1.2",
-    "vuetify": "^3.5.8",
+    "vuetify": "^3.5.16",
     "vuetify-message-vue3": "^1.1.1"
   }
 }

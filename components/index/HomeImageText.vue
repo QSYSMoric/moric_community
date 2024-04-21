@@ -1,6 +1,13 @@
 <template>
   <v-container fluid class="img-text">
-    <Waterfall :list="list" :crossOrigin="false" :hasAroundGutter="true" align="left" :gutter="16">
+    <Waterfall
+      :list="list"
+      class="bg-[--v-theme-surface-light]!"
+      :crossOrigin="false"
+      :hasAroundGutter="true"
+      align="left"
+      :gutter="16"
+    >
       <template #item="{ item }">
         <v-card class="card" hover>
           <template v-slot:loader="{ isActive }">
@@ -36,7 +43,7 @@
           <v-card-text>
             <v-row align="center" class="mx-0">
               <v-rating
-                :model-value="4.5"
+                :model-value="5"
                 color="primary"
                 density="compact"
                 size="small"
@@ -44,7 +51,7 @@
                 readonly
               ></v-rating>
 
-              <div class="text-grey ms-4">4.5 (413)</div>
+              <div class="text-grey ms-4">5 (五星好评！)</div>
             </v-row>
 
             <v-card-subtitle class="my-4 pa-0">简介：</v-card-subtitle>

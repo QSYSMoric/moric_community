@@ -151,5 +151,8 @@ export interface ArticleInfo {
         attributes: FileObj;
       }[];
     };
+    comment_cs: {
+      data: Comment_cs[];
+    };
   };
 }

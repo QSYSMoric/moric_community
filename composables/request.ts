@@ -18,7 +18,7 @@ export function httpRequest<T = unknown>(
   const defaultOpts = {
     method,
     baseURL,
-    headers: token.value ? ({ Authorization: "Bearer " + token.value } as any) : null,
+    headers: token.value ? ({ Authorization: "Bearer " + token.value } as any) : void 0,
     onRequestError() {
       notify({
         text: "请求出错，请重试！",
@@ -69,7 +69,7 @@ export function httpRequest<T = unknown>(
   } as FetchOptions;
 
   if (defaultOpts) {
-    if (method === "post") defaultOpts.body = bodyOrParams;
+    if (method === "post" || method === "put") defaultOpts.body = bodyOrParams;
     else defaultOpts.params = bodyOrParams;
   }
   return $fetch<T>(url, merge(defaultOpts, opts));
@@ -79,6 +79,13 @@ export function httpPost<T = unknown>(request: ReqType, body?: any, opts?: Fetch
   return httpRequest<T>("post", request, body, opts);
 }
 
+export function httpPut<T = unknown>(request: ReqType, body?: any, opts?: FetchOptions) {
+  return httpRequest<T>("put", request, body, opts);
+}
+
 export function httpGet<T = unknown>(request: ReqType, opts?: FetchOptions) {
   return httpRequest<T>("get", request, null, opts);
+}
+export function httpDelete<T = unknown>(request: ReqType, opts?: FetchOptions) {
+  return httpRequest<T>("delete", request, null, opts);
 }

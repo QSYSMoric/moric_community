@@ -4,5 +4,5 @@
  */
 export interface Command<T> {
   receiver: T;
-  execute: () => any;
+  execute: (option: any) => any;
 }

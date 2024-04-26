@@ -41,10 +41,11 @@
           @click="go('/creator')"
         ></v-list-item>
         <v-list-item
-          prepend-icon="mdi-creation"
-          title="收藏"
+          prepend-icon="mdi-account-star"
+          title="个人中心"
           color="primary"
-          value="starred"
+          value="personalCenter"
+          @click="go('/personalCenter')"
         ></v-list-item>
       </v-list>
       <v-spacer></v-spacer>
@@ -119,10 +120,9 @@
 
 <script setup lang="ts">
 import type { Me } from "@/type/index";
-import { useTheme } from "vuetify";
+import { useThemeDisplay } from "~/composables/media";
 
-const nuxtApp = useNuxtApp();
-const theme = useTheme();
+const theme = useThemeDisplay();
 
 function toggleTheme() {
   theme.global.name.value = theme.global.current.value.dark ? "light" : "dark";
@@ -143,6 +143,7 @@ const media = useMedia();
 const routeMap = new Map([
   ["/", "myfiles"],
   ["/creator", "shared"],
+  ["/personalCenter", "personalCenter"],
 ]);
 const { smAndUp, name } = media;
 const mySelf = useMystore();

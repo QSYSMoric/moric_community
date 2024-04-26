@@ -77,6 +77,14 @@ export interface TrendHome {
     comment_cs: {
       data: Comment_cs[];
     };
+    likeUsers: {
+      data: {
+        id: number;
+        attributes: {
+          username: string;
+        };
+      }[];
+    };
   };
 }
 

@@ -1,5 +1,5 @@
 import type { TrendHome, Comment_cs } from "~/type";
-import { LikeCommand, BookmarkCommand } from "@/class/TrendCommand";
+import { LikeCommand, BookmarkCommand, UnlikeCommand } from "@/class/TrendCommand";
 import { postComments } from "@/api";
 const { notify } = useNotification();
 /**
@@ -13,12 +13,22 @@ export class Trend {
   public doYouWantToOpenComments: boolean = false;
   public like: LikeCommand;
   public bookmark: BookmarkCommand;
-  protected type: string = "trends";
+  public unlike: UnlikeCommand;
+  protected type: "trend" = "trend";
+  public isLiked: boolean = false;
 
   constructor(trend: TrendHome) {
     this.trend = trend;
-    this.like = new LikeCommand(trend.id);
+    this.like = new LikeCommand(trend.id, this.type);
     this.bookmark = new BookmarkCommand(trend.id);
+    this.unlike = new UnlikeCommand(trend.id, this.type);
+    const me = useMystore();
+    if (me.isLongin) {
+      let data = this.trend.attributes.likeUsers.data.findIndex((element) => {
+        return element.id == me.getMe.id;
+      });
+      this.isLiked = !!~data;
+    }
   }
   /**
    * @descripttion: 切换评论点赞状态
@@ -33,7 +43,16 @@ export class Trend {
    * @return {*}
    */
   likeDo(): void {
-    this.like.execute();
+    const me = useMystore();
+    if (this.isLiked) {
+      this.unlike.execute(me.getMe.id).then((data) => {
+        this.isLiked = false;
+      });
+    } else {
+      this.like.execute(me.getMe.id).then((data) => {
+        this.isLiked = true;
+      });
+    }
   }
 
   /**

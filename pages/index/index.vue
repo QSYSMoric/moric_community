@@ -6,7 +6,7 @@
           <v-tabs v-model="tab" align-tabs="end" color="secondary" class="pb-1" show-arrows grow>
             <v-tab :value="1">文章</v-tab>
             <v-tab :value="2">动态</v-tab>
-            <v-tab :value="3">发现朋友</v-tab>
+            <!-- <v-tab :value="3">发现朋友</v-tab> -->
           </v-tabs>
           <v-window v-model="tab">
             <v-window-item :value="1">

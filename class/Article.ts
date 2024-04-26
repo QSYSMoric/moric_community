@@ -14,10 +14,10 @@ export class Article {
   public doYouWantToOpenComments: boolean = false;
   public like: LikeCommand;
   public bookmark: BookmarkCommand;
-  protected type: string = "article";
+  protected type: "article" = "article";
   constructor(article: ArticleInfo) {
     this.article = article;
-    this.like = new LikeCommand(article.id);
+    this.like = new LikeCommand(article.id, this.type);
     this.bookmark = new BookmarkCommand(article.id);
   }
   /**

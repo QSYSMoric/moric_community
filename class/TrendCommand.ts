@@ -1,29 +1,49 @@
 import type { Command } from "@/type/designPattern";
-
+import type { PostRequest } from "@/type/index";
+const { notify } = useNotification();
 /**
  * @descripttion: 点赞处理类
  * @return {*}
  */
 class LikeReceiver {
-  postId: number;
+  trend?: number;
+  article?: number;
+  api: string;
+  type: "trend" | "article";
+  users_permissions_user?: number;
 
-  constructor(postId: number) {
-    this.postId = postId;
+  constructor(postId: number, type: "trend" | "article") {
+    this.type = type;
+    if (type == "trend") {
+      this.api = "/trends/" + postId;
+    } else {
+      this.api = "/articles/" + postId;
+    }
   }
 
-  async like() {
+  async like(users_permissions_user: number): Promise<{
+    id: number;
+  }> {
+    this.users_permissions_user = users_permissions_user;
     // 发送点赞请求给后端
-    const response = await fetch(`/api/posts/${this.postId}/like`, {
-      method: "POST",
-      // 可以根据需要设置其他请求参数
+    const response = await httpPut<
+      PostRequest<{
+        id: number;
+      }>
+    >(this.api, {
+      data: {
+        likeUsers: {
+          connect: [this.users_permissions_user],
+        },
+      },
     });
-
-    if (response.ok) {
-      // 更新界面显示，例如增加点赞计数等
-      console.log("点赞成功");
-    } else {
-      console.error("点赞失败");
+    if (response.data) {
+      notify({
+        text: "点赞成功",
+        type: "success",
+      });
     }
+    return response.data;
   }
 }
 
@@ -33,11 +53,76 @@ class LikeReceiver {
  */
 export class LikeCommand implements Command<LikeReceiver> {
   receiver: LikeReceiver;
-  constructor(postId: number) {
-    this.receiver = new LikeReceiver(postId);
+
+  constructor(postId: number, type: "trend" | "article") {
+    this.receiver = new LikeReceiver(postId, type);
   }
-  async execute(): Promise<any> {}
+  async execute(users_permissions_user: number): Promise<{
+    id: number;
+  }> {
+    return this.receiver.like(users_permissions_user);
+  }
 }
+
+/**
+ * @descripttion: 取消点赞处理类
+ * @return {*}
+ */
+class UnlikeReceiver {
+  trend?: number;
+  article?: number;
+  api: string;
+  type: "trend" | "article";
+  users_permissions_user?: number;
+
+  constructor(postId: number, type: "trend" | "article") {
+    this.type = type;
+    if (type == "trend") {
+      this.api = "/trends/" + postId;
+    } else {
+      this.api = "/articles/" + postId;
+    }
+  }
+
+  async unlike(users_permissions_user: number): Promise<void> {
+    this.users_permissions_user = users_permissions_user;
+
+    const response = await httpPut<
+      PostRequest<{
+        id: number;
+      }>
+    >(this.api, {
+      data: {
+        likeUsers: {
+          disconnect: [this.users_permissions_user],
+        },
+      },
+    });
+    if (response.data) {
+      notify({
+        text: "取消点赞成功",
+        type: "warn",
+      });
+    }
+  }
+}
+
+/**
+ * @descripttion: 取消点赞命令
+ * @return {*}
+ */
+export class UnlikeCommand implements Command<UnlikeReceiver> {
+  receiver: UnlikeReceiver;
+
+  constructor(postId: number, type: "trend" | "article") {
+    this.receiver = new UnlikeReceiver(postId, type);
+  }
+
+  async execute(users_permissions_user: number): Promise<void> {
+    await this.receiver.unlike(users_permissions_user);
+  }
+}
+
 /**
  * @descripttion: 评论处理类
  * @return {*}

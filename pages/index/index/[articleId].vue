@@ -157,7 +157,9 @@
                         </v-card>
                       </template>
                     </div>
-
+                    <template v-slot:empty>
+                      <v-alert type="warning">没有更多评论啦!</v-alert>
+                    </template>
                     <template v-slot:load-more="{ props }">
                       <v-btn icon="mdi-refresh" size="small" variant="text" v-bind="props"></v-btn>
                     </template>
@@ -198,7 +200,7 @@ function close(): void {
  * @return {*}
  */
 function load({ done }: any): void {
-  done("ok");
+  done("empty");
 }
 
 /**

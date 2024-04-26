@@ -27,24 +27,36 @@
               <template v-slot:append>
                 <div class="justify-self-end">
                   <v-icon class="me-1" icon="mdi-heart" color="deep-orange" :size="16"></v-icon>
-                  <span class="subheading me-2 fs-sm">256</span>
-                  <span class="me-1">·</span>
-                  <v-icon
+                  <span class="subheading me-2 fs-sm">{{
+                    item.trend.attributes.likeUsers.data.length
+                  }}</span>
+                  <!-- <span class="me-1">·</span> -->
+                  <!-- <v-icon
                     class="me-1"
                     icon="mdi-share-variant"
                     color="blue-darken-2"
                     :size="16"
                   ></v-icon>
-                  <span class="subheading fs-sm">45</span>
+                  <span class="subheading fs-sm">45</span> -->
                 </div>
               </template>
               <v-card-actions>
                 <v-container>
                   <v-row justify="end">
-                    <v-btn prepend-icon="mdi-thumb-up-outline" color="primary">点赞 </v-btn>
-                    <v-btn prepend-icon="mdi-bookmark-box-multiple-outline" color="primary">
-                      收藏
+                    <v-btn
+                      :prepend-icon="item.isLiked ? 'mdi-thumb-up' : 'mdi-thumb-up-outline'"
+                      @click="
+                        () => {
+                          item.likeDo();
+                        }
+                      "
+                      :color="item.isLiked ? 'deep-orange' : 'primary'"
+                    >
+                      点赞
                     </v-btn>
+                    <!-- <v-btn prepend-icon="mdi-bookmark-box-multiple-outline" color="primary">
+                      收藏
+                    </v-btn> -->
                     <v-btn
                       prepend-icon="mdi-comment-processing-outline"
                       @click="

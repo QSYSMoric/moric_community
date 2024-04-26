@@ -68,6 +68,9 @@ export async function getHomeTrends(
             },
             sort: ["createdAt:desc"],
           },
+          likeUsers: {
+            fields: ["username", "avatart"],
+          },
         },
         pagination: {
           page,

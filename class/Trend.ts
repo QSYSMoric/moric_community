@@ -47,10 +47,17 @@ export class Trend {
     if (this.isLiked) {
       this.unlike.execute(me.getMe.id).then((data) => {
         this.isLiked = false;
+        this.trend.attributes.likeUsers.data.length--;
       });
     } else {
       this.like.execute(me.getMe.id).then((data) => {
         this.isLiked = true;
+        this.trend.attributes.likeUsers.data.push({
+          id: me.getMe.id,
+          attributes: {
+            username: me.getMe.username,
+          },
+        });
       });
     }
   }

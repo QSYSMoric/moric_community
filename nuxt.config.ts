@@ -39,11 +39,14 @@ export default defineNuxtConfig({
     ],
     "dayjs-nuxt",
     "@unocss/nuxt",
+    "@hypernym/nuxt-gsap",
+    "@formkit/auto-animate/nuxt",
   ],
   runtimeConfig: {
     public: {
       api_url: process.env.API_ORGIN,
       file_url: process.env.File_ORGIN,
+      editor_key: process.env.Editor_key,
     },
   },
   unocss: {

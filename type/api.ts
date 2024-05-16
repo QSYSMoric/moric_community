@@ -40,10 +40,54 @@ export interface FileObj {
   id: number;
   url: string;
   formats: {
-    small: File;
-    medium: File;
-    thumbnail: File;
-    large: File;
+    small: {
+      ext: string;
+      url: string;
+      hash: string;
+      mime: string;
+      name: string;
+      path: string;
+      size: number;
+      width: number;
+      height: number;
+      sizeInBytes: number;
+    };
+    medium: {
+      ext: string;
+      url: string;
+      hash: string;
+      mime: string;
+      name: string;
+      path: string;
+      size: number;
+      width: number;
+      height: number;
+      sizeInBytes: number;
+    };
+    thumbnail: {
+      ext: string;
+      url: string;
+      hash: string;
+      mime: string;
+      name: string;
+      path: string;
+      size: number;
+      width: number;
+      height: number;
+      sizeInBytes: number;
+    };
+    large: {
+      ext: string;
+      url: string;
+      hash: string;
+      mime: string;
+      name: string;
+      path: string;
+      size: number;
+      width: number;
+      height: number;
+      sizeInBytes: number;
+    };
   };
 }
 

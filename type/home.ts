@@ -67,7 +67,7 @@ export interface TrendHome {
           username: string;
           avatart: {
             id: number;
-            data: {
+            data?: {
               attributes: FileObj;
             };
           };
@@ -84,6 +84,36 @@ export interface TrendHome {
           username: string;
         };
       }[];
+    };
+    aboutArticle: {
+      data?: {
+        id: number;
+        attributes: {
+          title: string;
+          introduction: string;
+          createdAt: string;
+          cover: {
+            data: {
+              id: number;
+              attributes: FileObj;
+            };
+          };
+          publisher: {
+            data: {
+              id: number;
+              attributes: {
+                username: string;
+                avatart?: {
+                  data: {
+                    id: number;
+                    attributes: FileObj;
+                  };
+                };
+              };
+            };
+          };
+        };
+      };
     };
   };
 }
@@ -129,7 +159,7 @@ export interface ArticleInfo {
   id: number;
   attributes: {
     title: string;
-    introduction: string;
+    content: string;
     createdAt: string;
     publisher: {
       data: {
@@ -163,4 +193,22 @@ export interface ArticleInfo {
       data: Comment_cs[];
     };
   };
+}
+
+/**
+ * @descripttion:达人列表
+ * @return {*}
+ */
+export interface Talents {
+  id: number;
+  username: string;
+  avatart: FileObj;
+  articles: {
+    id: number;
+    cover: FileObj;
+  }[];
+  excels: {
+    id: number;
+    title: string;
+  }[];
 }

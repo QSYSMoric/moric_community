@@ -6,6 +6,8 @@ import type {
   PostRequest,
   ArticleHomeList,
   ArticleInfo,
+  Classification,
+  Talents,
 } from "~/type";
 import qs from "qs";
 const { notify } = useNotification();
@@ -70,6 +72,16 @@ export async function getHomeTrends(
           },
           likeUsers: {
             fields: ["username", "avatart"],
+          },
+          aboutArticle: {
+            populate: {
+              cover: true,
+              publisher: {
+                populate: ["avatart"],
+                fields: ["username"],
+              },
+            },
+            fields: ["title", "introduction", "createdAt"],
           },
         },
         pagination: {
@@ -196,7 +208,7 @@ export async function getArticleInfo(
             fields: true,
           },
         },
-        fields: ["title", "introduction", "createdAt"],
+        fields: ["title", "createdAt", "content"],
       },
       {
         encodeValuesOnly: true, // prettify URL
@@ -205,6 +217,51 @@ export async function getArticleInfo(
     const response = await httpGet<Request<ArticleInfo, undefined>>(
       "/articles/" + articleId + "/?" + query
     );
+    return response;
+  } catch (error) {
+    notify({
+      text: "未知错误",
+      type: "error",
+    });
+    throw error;
+  }
+}
+
+/**
+ * @descripttion: 获取达人列表
+ * @return {*}
+ */
+export async function getUserList(
+  excels: Classification[],
+  page: number = 1,
+  pageSize: number = 10
+): Promise<Talents[]> {
+  try {
+    const query = qs.stringify({
+      populate: {
+        avatart: true,
+        articles: {
+          populate: {
+            cover: true,
+          },
+          fields: ["cover"],
+        },
+        excels: true,
+      },
+      filters: {
+        excels: {
+          id: {
+            $in: [6],
+          },
+        },
+      },
+      pagination: {
+        page,
+        pageSize,
+      },
+      fields: ["username"],
+    });
+    const response = await httpGet<Talents[]>("/users?" + query);
     return response;
   } catch (error) {
     notify({

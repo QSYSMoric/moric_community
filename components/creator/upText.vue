@@ -9,7 +9,7 @@
               <label class="label text-grey-darken-2">标题</label>
               <v-text-field v-model="trends.title" :rules="firstNameRules"></v-text-field>
               <label class="label text-grey-darken-2">正文</label>
-              <v-textarea
+              <!-- <v-textarea
                 v-model="trends.text"
                 :rules="lastNameRules"
                 clearable
@@ -18,7 +18,15 @@
                 variant="solo-filled"
                 bg-color="grey-lighten-5"
                 counter
-              ></v-textarea>
+              ></v-textarea> -->
+              <v-sheet class="m-b-4">
+                <Editor
+                  v-model="trends.text"
+                  :api-key="editorConfig.apiKey"
+                  :init="editorConfig.editInit"
+                  tinymceScriptSrc="/tinymce/tinymce.min.js"
+                ></Editor>
+              </v-sheet>
               <label class="label text-grey-darken-2">选择你的相关文章</label>
               <v-select
                 v-model="trends.aboutArticle"
@@ -63,8 +71,14 @@
               </v-avatar>
             </template>
             <v-card-title>{{ trends.title }} </v-card-title>
-
-            <v-card-text> {{ trends.text }}</v-card-text>
+            <v-card-text>
+              <Editor
+                rer="ediotrRead"
+                v-model="trends.text"
+                :api-key="editorConfig.apiKey"
+                :init="editorConfig.readInit"
+              />
+            </v-card-text>
             <template v-slot:append>
               <div class="justify-self-end">
                 <v-icon class="me-1" icon="mdi-heart" color="deep-orange"></v-icon>
@@ -132,6 +146,7 @@ import { upTrends } from "@/api/index";
 const { notify } = useNotification();
 const my = useMystore();
 const subLoading = ref<boolean>(false);
+const ediotrRead = ref();
 const articles = ref<
   {
     id: number;
@@ -140,6 +155,7 @@ const articles = ref<
 >([]);
 const dayjs = useDayjs();
 let now = dayjs().format("YYYY-MM-DD HH:mm");
+
 /**
  * @descripttion: 发布动态
  * @return {*}

@@ -24,7 +24,7 @@
                 counter
               ></v-textarea>
               <label class="label text-grey-darken-2">正文</label>
-              <v-textarea
+              <!-- <v-textarea
                 v-model="articleForm.receiver.content"
                 :rules="lastNameRules"
                 clearable
@@ -34,8 +34,15 @@
                 bg-color="grey-lighten-5"
                 color="primary"
                 counter
-              ></v-textarea>
-              <label class="label text-grey-darken-2">选择你的分类</label>
+              ></v-textarea> -->
+              <Editor
+                rer="ediotrRead"
+                v-model="articleForm.receiver.content"
+                :api-key="editorConfig.apiKey"
+                :init="editorConfig.editInit"
+                tinymceScriptSrc="/tinymce/tinymce.min.js"
+              />
+              <label class="label text-grey-darken-2 mt-4">选择你的分类</label>
               <v-select
                 v-model="articleForm.receiver.classification"
                 :items="classificationList"
@@ -44,6 +51,7 @@
                 item-value="id"
                 color="primary"
               />
+
               <label class="label text-grey-darken-2">选择文章的标签</label>
               <v-select
                 v-model="articleForm.receiver.labels"
@@ -112,7 +120,6 @@
                 </v-chip>
               </v-card-title>
             </v-img>
-
             <v-card-actions>
               <v-btn
                 color="primary"
@@ -162,25 +169,23 @@
     :opacity="0.4"
     persistent
     disabled
-    width="100vw"
-    height="100vh"
+    class="flex items-center justify-center"
     content-class="align-center"
     :absolute="false"
   >
-    <v-sheet class="mx-auto rounded-lg" width="70vw" min-height="90vh">
-      <v-container style="height: 100%" class="pa-0">
-        <v-row style="height: 100%" class="ma-0">
-          <v-col cols="7">
-            <v-carousel hide-delimiters height="90vh" progress="primary">
+    <v-sheet class="rounded-lg w-100vw h-100vh m-card lg:w-80vw lg:h-90vh relative">
+      <v-container style="height: 100%" class="pa-0 overflow-y-auto lg:overflow-y-hidden!">
+        <v-row class="ma-0 h-100%">
+          <v-col cols="12" md="7" class="h-100% flex items-center">
+            <v-carousel hide-delimiters progress="primary">
               <v-carousel-item
                 v-for="item of imgsFiledCommand.receiver"
                 :src="item.url"
-                cover
                 :key="item.id"
               ></v-carousel-item>
             </v-carousel>
           </v-col>
-          <v-col cols="5" class="pa-0">
+          <v-col cols="12" md="5" class="pa-0">
             <v-card variant="flat" :subtitle="now" :title="my.getMe.username">
               <template v-slot:prepend>
                 <v-avatar color="blue-darken-2">
@@ -200,7 +205,14 @@
                 ></v-btn>
               </template>
               <v-card-title>{{ articleForm.receiver.title }} </v-card-title>
-              <v-card-text> {{ articleForm.receiver.content }} </v-card-text>
+              <v-card-text>
+                <Editor
+                  rer="ediotrRead"
+                  v-model="articleForm.receiver.content"
+                  :api-key="editorConfig.apiKey"
+                  :init="editorConfig.readInit"
+                />
+              </v-card-text>
               <v-card-actions>
                 <v-btn
                   variant="text"
@@ -284,6 +296,7 @@
 import type { Classification, Labels, Article, Form, FileObj } from "@/type/index";
 import { UploadFileCommand } from "@/class/UploadFileCommand";
 import { upArticles } from "@/api/index";
+import { editorUpFile } from "~/composables/customUpload";
 const my = useMystore();
 const { notify } = useNotification();
 const config = useConfigstore();
@@ -373,7 +386,7 @@ const getLabelList = computed(() => {
     let lavelList = classificationList.value.find((element: Classification) => {
       return element.id == articleForm.value.receiver.classification!.id;
     });
-    return lavelList?.attributes.labels.data;
+    return lavelList?.attributes.labels?.data;
   }
   return [];
 });

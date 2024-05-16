@@ -31,6 +31,9 @@ export default defineNuxtPlugin((app) => {
           colors: {
             primary: colors.teal.darken3, // #E53935
             secondary: colors.teal.darken2, // #FFCDD2
+            info: "#2196F3",
+            subContent: "#f6f7f8",
+            subContentInfo: twColors.white,
           },
         },
         dark,

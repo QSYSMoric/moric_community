@@ -162,3 +162,12 @@ $font-sizes: (
     padding-bottom: 0 !important;
   }
 }
+
+  .scroll-container {
+    overflow: auto; /* 显示滚动条，根据内容决定是否显示 */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
+  .scroll-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, and Opera */
+  }

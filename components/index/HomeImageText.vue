@@ -1,10 +1,30 @@
 <template>
   <v-container fluid class="img-text">
+    <v-sheet class="pa-2 d-flex flex-wrap">
+      <v-chip
+        class="ma-2"
+        v-for="item of items"
+        :key="item.id"
+        :color="clolor(item)"
+        :value="item.id"
+        @click="switchClassification(item)"
+        link
+      >
+        <v-icon icon="mdi-tag-multiple" start></v-icon>
+        {{ item.attributes.title }}
+      </v-chip>
+    </v-sheet>
     <Waterfall
       :list="list"
       class="bg-[--v-theme-surface-light]!"
       :crossOrigin="false"
       :hasAroundGutter="true"
+      :breakpoints="{
+        1920: { rowPerView: 4 },
+        1200: { rowPerView: 3 },
+        960: { rowPerView: 2 },
+        600: { rowPerView: 1 },
+      }"
       align="left"
       :gutter="16"
     >
@@ -29,7 +49,7 @@
               <v-avatar :size="26">
                 <v-img
                   :src="
-                    getFileUrl(item.attributes.publisher.data.attributes.avatart.data.attributes)
+                    getFileUrl(item.attributes.publisher.data.attributes.avatart.data?.attributes)
                   "
                 >
                 </v-img>
@@ -74,10 +94,48 @@
 
 <script setup lang="ts">
 import { getHomeArticlesList } from "@/api/index";
-import type { ArticleHomeList } from "@/type/index";
+import type { ArticleHomeList, Classification } from "@/type/index";
 
 const router = useRouter();
+const items = ref<Classification[]>([
+  {
+    id: -1,
+    attributes: {
+      title: "全部",
+    },
+  },
+]);
+const classification = useConfigstore();
+classification.getClassification().then((data: Classification[]) => {
+  items.value = data;
+});
 
+//选项
+const select = ref<number>(-1);
+
+/**
+ * @descripttion: 切换分类
+ * @return {*}
+ */
+function switchClassification(item: Classification): void {
+  select.value = item.id;
+}
+
+let clolor = computed(() => {
+  return function (item: Classification) {
+    let flag = select.value == item.id;
+    return flag ? "primary" : "";
+  };
+});
+
+/**
+ * @descripttion: 删除一个筛选项
+ * @param {*} item
+ * @return {*}
+ */
+function remove(item: Classification): void {
+  // chips.value.splice(chips.value.indexOf(item), 1);
+}
 /**
  * @descripttion:前往文章详情页
  * @return {*}

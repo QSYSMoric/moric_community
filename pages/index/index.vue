@@ -6,7 +6,7 @@
           <v-tabs v-model="tab" align-tabs="end" color="secondary" class="pb-1" show-arrows grow>
             <v-tab :value="1">文章</v-tab>
             <v-tab :value="2">动态</v-tab>
-            <!-- <v-tab :value="3">发现朋友</v-tab> -->
+            <v-tab :value="3">达人</v-tab>
           </v-tabs>
           <v-window v-model="tab">
             <v-window-item :value="1">
@@ -16,7 +16,7 @@
               <IndexHomeTrends />
             </v-window-item>
             <v-window-item :key="3" :value="3">
-              <v-container fluid style="height: 100vh"> dd </v-container>
+              <IndexHomeExpert />
             </v-window-item>
           </v-window>
         </VCard>

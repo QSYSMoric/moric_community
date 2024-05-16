@@ -14,6 +14,8 @@ export const light: ThemeDefinition = {
     info: twColors.blue[500],
     success: twColors.emerald[500],
     warning: twColors.amber[500],
+    subContent: "#E0E0E0",
+    subContentInfo: twColors.white,
   },
 };
 
@@ -31,5 +33,7 @@ export const dark: ThemeDefinition = {
     info: twColors.blue[500],
     success: twColors.emerald[500],
     warning: twColors.amber[500],
+    subContent: twColors.slate[800],
+    subContentInfo: twColors.slate[700],
   },
 };

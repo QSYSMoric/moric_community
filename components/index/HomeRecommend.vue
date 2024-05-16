@@ -32,7 +32,6 @@
           </v-slide-group>
         </v-sheet>
       </v-col>
-
       <v-col cols="12">
         <v-card variant="flat">
           <v-list lines="two">

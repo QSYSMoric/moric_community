@@ -25,7 +25,7 @@ export interface Classification {
   id: number;
   attributes: {
     title: string;
-    labels: {
+    labels?: {
       data: Labels[];
     };
   };

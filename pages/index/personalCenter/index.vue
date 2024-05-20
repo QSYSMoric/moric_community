@@ -349,6 +349,12 @@ const basicForm = ref<{
         basicForm.value.data.avatart = data[0];
       }
       upDataMeInfo(basicForm.value.data).then(() => {
+        basicForm.value.data.excels = classificationList.value.map((element) => {
+          return {
+            id: element.id,
+            title: element.title,
+          };
+        });
         myself.setBasicMsg(basicForm.value.data);
         notify({
           title: "成功",

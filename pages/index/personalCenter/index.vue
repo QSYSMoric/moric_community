@@ -130,12 +130,16 @@
                     <v-select
                       v-model="basicForm.data.excels"
                       :items="classificationList"
-                      prepend-inner-icon="mdi-pound"
-                      color="primary"
+                      :item-props="classificationProps"
+                      item-title="title"
                       item-value="id"
+                      prepend-inner-icon="mdi-pound"
+                      return-object
+                      color="primary"
                       chips
                       multiple
-                    ></v-select>
+                    >
+                    </v-select>
                   </v-col>
                   <v-col cols="12" class="py-0 mt-4">
                     <label class="label text-grey-darken-2">个人说明</label>
@@ -349,12 +353,6 @@ const basicForm = ref<{
         basicForm.value.data.avatart = data[0];
       }
       upDataMeInfo(basicForm.value.data).then(() => {
-        basicForm.value.data.excels = classificationList.value.map((element) => {
-          return {
-            id: element.id,
-            title: element.title,
-          };
-        });
         myself.setBasicMsg(basicForm.value.data);
         notify({
           title: "成功",
@@ -376,6 +374,13 @@ const classificationList = ref<
     title: string;
   }[]
 >([]);
+
+const classificationProps = function (item: { id: number; title: string }) {
+  return {
+    title: item.title,
+    id: item.id,
+  };
+};
 
 await config.getClassification().then((data: Classification[]) => {
   classificationList.value = data.map((element) => {

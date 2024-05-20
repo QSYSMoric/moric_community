@@ -47,6 +47,12 @@ export default defineNuxtPlugin((app) => {
       fallback: "zhHans",
       messages: { zhHans },
     },
+    date: {
+      locale: {
+        en: zhHans,
+        sv: zhHans,
+      },
+    },
   });
 
   app.vueApp.use(vuetify as any);

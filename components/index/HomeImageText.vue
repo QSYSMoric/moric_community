@@ -95,8 +95,13 @@
 <script setup lang="ts">
 import { getHomeArticlesList } from "@/api/index";
 import type { ArticleHomeList, Classification } from "@/type/index";
-
+const route = useRoute();
 const router = useRouter();
+//搜索内容
+const { keyWord } = toRefs<{
+  keyWord?: string;
+}>(route.query);
+
 const items = ref<Classification[]>([
   {
     id: -1,

@@ -41,9 +41,9 @@ export class Article {
       users_permissions_user: me.getMe.id,
     }).then((data) => {
       this.article.attributes.comment_cs.data.unshift({
-        id: data.data.id,
+        id: data.data!.id,
         attributes: {
-          ...data.data.attributes!,
+          ...data.data!.attributes!,
           users_permissions_user: {
             data: {
               id: me.getMe.id,

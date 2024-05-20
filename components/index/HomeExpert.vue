@@ -10,30 +10,55 @@
                   <v-img :src="getFileUrl(item.avatart)"></v-img>
                 </v-avatar>
               </template>
-              <template v-slot:subtitle> 副标题 </template>
-              <template v-slot:append>
-                <v-btn color="primary" rounded="2" variant="outlined"> 其他作品 </v-btn>
+              <template v-slot:subtitle>
+                <div>
+                  <v-chip
+                    color="primary"
+                    class="mx-1"
+                    v-for="node of item.excels"
+                    size="small"
+                    :key="node.id"
+                  >
+                    {{ node.title }}
+                  </v-chip>
+                </div>
               </template>
-              <v-card-text class="pa-0">
-                <v-container>
+              <template v-slot:append>
+                <v-btn
+                  color="primary"
+                  @click="goPersonalInfo(item.id)"
+                  rounded="2"
+                  variant="outlined"
+                >
+                  其他作品
+                </v-btn>
+              </template>
+              <v-card-text class="pa-0 bg-[#ECEFF1]">
+                <v-container class="h-max">
                   <v-row v-if="item.articles.length">
-                    <v-col :cols="6" :sm="3" v-for="node of item.articles.slice(4)" :key="node">
+                    <v-col
+                      :cols="6"
+                      :sm="3"
+                      v-for="node of getArticles4(item.articles)"
+                      :key="node"
+                    >
                       <v-img
-                        class="bg-grey-lighten-2 cursor-pointer"
+                        class="bg-grey-lighten-2 transition ease-in-out cursor-pointer hover:scale-115"
                         height="125"
+                        @click="goAttributesInfo(node.id)"
                         :src="getFileUrl(node.cover)"
                         cover
                       ></v-img>
                     </v-col>
                   </v-row>
-                  <v-row v-else> 暂无更多内容 </v-row>
+                  <v-row class="pa-4" v-else> 该用户暂未发布任何作品 </v-row>
                 </v-container>
               </v-card-text>
             </v-card>
             <v-divider></v-divider>
           </template>
           <template v-slot:empty>
-            <v-alert type="warning">没有更多评论啦!</v-alert>
+            <v-alert type="info">没有更多内容了</v-alert>
           </template>
           <template v-slot:load-more="{ props }">
             <v-btn icon="mdi-refresh" size="small" variant="text" v-bind="props"></v-btn>
@@ -102,7 +127,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Classification, Labels, Talents } from "@/type/index";
+import type { Classification, FileObj, Labels, Talents } from "@/type/index";
 import { getUserList } from "@/api/index";
 
 const items = ref<Talents[]>([]);
@@ -110,6 +135,7 @@ const searchField = ref();
 const config = useConfigstore();
 const loading = ref(false);
 const search = ref("");
+const router = useRouter();
 const selected = ref<Classification[]>([]);
 /**
  * @descripttion: 加载更多
@@ -121,6 +147,36 @@ async function load({ done }: { done: Function }): Promise<void> {
 }
 
 const itemList = ref<Classification[]>([]);
+/**
+ * @descripttion:前往文章详情页
+ * @return {*}
+ */
+function goAttributesInfo(articleId: number): void {
+  console.log(articleId);
+  router.push({
+    path: `/${articleId}`,
+  });
+}
+
+/**
+ * @descripttion: 获取前四个作品
+ * @return {*}
+ */
+function getArticles4(
+  articles: {
+    id: number;
+    cover: FileObj;
+  }[]
+): {
+  id: number;
+  cover: FileObj;
+}[] {
+  if (articles.length > 4) {
+    return articles.slice(0, 4);
+  } else {
+    return articles;
+  }
+}
 
 config.getClassification().then((data: Classification[]) => {
   data.forEach((element) => {
@@ -157,6 +213,19 @@ function addClass(item: Classification): void {
   } else {
     itemList.value.splice(index, 1);
   }
+}
+
+/**
+ * @descripttion:前往个人详情页
+ * @return {*}
+ */
+function goPersonalInfo(userId: number): void {
+  router.push({
+    path: "/personalInfo",
+    query: {
+      userId,
+    },
+  });
 }
 
 /**

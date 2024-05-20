@@ -22,8 +22,8 @@
                 loading
               >
                 <v-img
-                  :lazy-src="getFileUrl(item.attributes, 'large')"
-                  :src="getFileUrl(item.attributes, 'large')"
+                  :lazy-src="getFileUrl(item.attributes)"
+                  :src="getFileUrl(item.attributes)"
                   aspect-ratio="1"
                   height="100%"
                   class="bg-grey-lighten-2"
@@ -65,9 +65,10 @@
               <v-card-title>{{ ArticleInfo?.article.attributes.title }}</v-card-title>
               <v-card-text>
                 <Editor
+                  class="pa-2 outline-none"
                   v-if="ArticleInfo"
                   v-model="ArticleInfo.article.attributes.content"
-                  api-key="no-api-key"
+                  :api-key="editorConfig.apiKey"
                   :init="{
                     language: 'zh_CN',
                     inline: true,
@@ -76,7 +77,6 @@
                     menubar: false,
                     statusbar: false,
                     toolbar: false,
-                    readonly: true,
                     hidden_input: true,
                   }"
                 />
@@ -226,7 +226,9 @@ onMounted(() => {
  * @return {*}
  */
 function close(): void {
-  router.back();
+  router.push({
+    path: "/",
+  });
 }
 
 /**
@@ -255,14 +257,20 @@ await getArticleInfo(route.params.articleId as string).then((data) => {
   .v-card-subtitle {
     font-size: 12px;
   }
-  .scroll-container {
-    overflow: auto; /* 显示滚动条，根据内容决定是否显示 */
 
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE and Edge */
+  .scroll-container {
+    overflow: auto;
+    /* 显示滚动条，根据内容决定是否显示 */
+
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
   }
+
   .scroll-container::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, and Opera */
+    display: none;
+    /* Chrome, Safari, and Opera */
   }
 }
 </style>

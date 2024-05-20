@@ -212,3 +212,19 @@ export interface Talents {
     title: string;
   }[];
 }
+
+/**
+ * @descripttion: 我所发布的文章列表
+ * @return {*}
+ */
+export interface MyArticlesTables {
+  id: number;
+  title: string;
+  content: string;
+  introduction: string;
+  createdAt: string;
+  cover: {
+    id: number;
+    attributes: FileObj;
+  };
+}

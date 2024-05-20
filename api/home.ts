@@ -8,6 +8,7 @@ import type {
   ArticleInfo,
   Classification,
   Talents,
+  UserInfo,
 } from "~/type";
 import qs from "qs";
 const { notify } = useNotification();
@@ -262,6 +263,72 @@ export async function getUserList(
       fields: ["username"],
     });
     const response = await httpGet<Talents[]>("/users?" + query);
+    return response;
+  } catch (error) {
+    notify({
+      text: "未知错误",
+      type: "error",
+    });
+    throw error;
+  }
+}
+
+/**
+ * @descripttion: 获取用户详细信息
+ * @param {number} userId
+ * @return {*}
+ */
+export async function getUserInfo(userId: number): Promise<UserInfo> {
+  try {
+    const query = qs.stringify({
+      populate: {
+        avatart: true,
+        articles: {
+          populate: {
+            publisher: {
+              populate: ["avatart"],
+              fields: ["username"],
+            },
+            cover: {
+              fields: true,
+            },
+          },
+        },
+        excels: true,
+        trends: {
+          populate: {
+            users_permissions_user: {
+              populate: ["avatart"],
+              fields: ["username"],
+            },
+            comment_cs: {
+              populate: {
+                users_permissions_user: {
+                  populate: ["avatart"],
+                  fields: ["username"],
+                },
+              },
+              sort: ["createdAt:desc"],
+            },
+            likeUsers: {
+              fields: ["username", "avatart"],
+            },
+            aboutArticle: {
+              populate: {
+                cover: true,
+                publisher: {
+                  populate: ["avatart"],
+                  fields: ["username"],
+                },
+              },
+              fields: ["title", "introduction", "createdAt"],
+            },
+          },
+        },
+      },
+      fields: ["username", "email", "introduction", "sex", "age", "explain", "birthday"],
+    });
+    const response = await httpGet<UserInfo>("/users/" + userId + "?" + query);
     return response;
   } catch (error) {
     notify({

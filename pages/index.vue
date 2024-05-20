@@ -49,7 +49,6 @@
         ></v-list-item>
       </v-list>
       <v-spacer></v-spacer>
-
       <template v-slot:append>
         <div class="pa-2">
           <v-btn variant="tonal" color="primary" @click="toggleTheme" block>切换主题</v-btn>
@@ -66,12 +65,10 @@
         <VAvatar color="teal-darken-4"> 青 </VAvatar>
       </v-app-bar-nav-icon>
     </template>
-
     <v-app-bar-title v-if="!smAndUp">小青社</v-app-bar-title>
     <template #append>
       <v-btn icon="mdi-heart" color="primary" class="d-md-none d-lg-none"></v-btn>
       <v-btn icon="mdi-magnify" color="primary" class="d-md-none d-lg-none"></v-btn>
-
       <v-menu transition="slide-y-transition" class="shrink">
         <template v-slot:activator="{ props }">
           <v-btn :icon="icon" color="primary" title="更多" v-bind="props"></v-btn>
@@ -157,9 +154,12 @@ const me = ref<Me>({
   confirmed: false,
   uuid: "",
   phone: -1,
-  sex: "",
+  sex: "confidential",
   age: -1,
   avatart: void 0,
+  articles: [],
+  excels: [],
+  trends: [],
 });
 mySelf.getUserInforAsync().then((data: Me | undefined) => {
   if (data) me.value = data;

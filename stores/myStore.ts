@@ -1,5 +1,7 @@
-import type { Me, Optionlist } from "@/type";
+import type { FileObj, Me, Optionlist } from "@/type";
 import { getUserInfor, getPublishedArticles } from "~/api/user";
+import { useRequest, useToggle } from "vue-hooks-plus";
+
 interface MeState {
   me: Me;
   apiMap: Map<string, Promise<any>>;
@@ -16,9 +18,12 @@ export const useMystore = defineStore("myStore", {
         confirmed: false,
         uuid: "",
         phone: -1,
-        sex: "",
+        sex: "confidential",
         age: -1,
         avatart: void 0,
+        articles: [],
+        excels: [],
+        trends: [],
       },
       apiMap: new Map(),
       myArticleslist: [],
@@ -35,22 +40,20 @@ export const useMystore = defineStore("myStore", {
   actions: {
     async getUserInforAsync(): Promise<Me | undefined> {
       const token = toRef(useCookie("token"));
-      if (!token.value && !this.isLongin) {
-        return void 0;
-      }
-      if (~!this.$state.me.id) {
-        if (this.$state.apiMap.has("getUserInfo")) {
-          return this.$state.apiMap.get("getUserInfo");
+      const [state, { toggle }] = useToggle();
+      return new Promise((resolve, reject) => {
+        if (!token.value && !this.isLongin) {
+          reject(void 0);
         }
-        let info = getUserInfor().then((data) => {
-          this.$state.me = data;
-          return data;
-        });
-        // this.$state.apiMap.set("getUserInfo", info);
-        // console.log(info);
-        return info;
-      }
-      return Promise.resolve(this.$state.me);
+        if (!~this.$state.me.id) {
+          getUserInfor().then((data) => {
+            resolve(data);
+            this.$state.me = data;
+          });
+        } else {
+          resolve(this.$state.me);
+        }
+      });
     },
     async getArticleslist(): Promise<Optionlist[] | undefined> {
       if (this.$state.myArticleslist.length) {
@@ -75,10 +78,32 @@ export const useMystore = defineStore("myStore", {
         confirmed: false,
         uuid: "",
         phone: -1,
-        sex: "",
+        sex: "confidential",
         age: -1,
         avatart: void 0,
+        articles: [],
+        excels: [],
+        trends: [],
       };
+    },
+    setBasicMsg(data: {
+      username: string;
+      sex: "confidential" | "male" | "female";
+      birthday?: string;
+      avatart?: FileObj;
+      introduction?: string;
+      excels: {
+        id: number;
+        title: string;
+      }[];
+    }) {
+      const { username, sex, birthday, avatart, excels, introduction } = data;
+      this.$state.me.username = username;
+      this.$state.me.sex = sex;
+      this.$state.me.birthday = birthday;
+      this.$state.me.avatart = avatart;
+      this.$state.me.excels = excels;
+      this.$state.me.introduction = introduction;
     },
   },
 });

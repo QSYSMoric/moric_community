@@ -36,7 +36,7 @@
                 counter
               ></v-textarea> -->
               <Editor
-                rer="ediotrRead"
+                ref="ediotrRead"
                 v-model="articleForm.receiver.content"
                 :api-key="editorConfig.apiKey"
                 :init="editorConfig.editInit"
@@ -207,7 +207,7 @@
               <v-card-title>{{ articleForm.receiver.title }} </v-card-title>
               <v-card-text>
                 <Editor
-                  rer="ediotrRead"
+                  ref="ediotrRead"
                   v-model="articleForm.receiver.content"
                   :api-key="editorConfig.apiKey"
                   :init="editorConfig.readInit"

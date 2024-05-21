@@ -1,23 +1,59 @@
 <template>
   <v-timeline align="start">
     <v-timeline-item
-      v-for="(node, i) in list"
+      v-for="(node, i) of trendList"
       dot-color="primary"
       class="mb-12"
       :key="node.id"
       size="small"
     >
       <template v-slot:opposite>
-        <div :class="`pt-1 headline text-subtitle-1`">
-          {{ getTime(node.createdAt) }}
-          <span class="text-subtitle-2 font-normal opacity-[var(--v-medium-emphasis-opacity)]"
-            >发布了动态</span
-          >
-        </div>
+        <v-card variant="text">
+          <v-card-text>
+            <div class="pt-1 headline text-subtitle-1 mb-2">
+              {{ getTime(node.createdAt) }}
+              <span class="text-subtitle-2 font-normal opacity-[var(--v-medium-emphasis-opacity)]"
+                >发布了动态</span
+              >
+            </div>
+            <v-dialog transition="dialog-bottom-transition" width="auto">
+              <template v-slot:activator="{ props: activatorProps }">
+                <v-btn
+                  class="w-100px!"
+                  v-bind="activatorProps"
+                  prepend-icon="mdi-delete"
+                  color="error"
+                  size="small"
+                >
+                  删除动态
+                </v-btn>
+              </template>
+              <template v-slot:default="{ isActive }">
+                <v-card>
+                  <v-toolbar title="要删除吗？"></v-toolbar>
+
+                  <v-card-text>
+                    确定删除你的动态:
+                    <span class="font-semibold color-[rgba(var(--v-theme-primary))]">
+                      《{{ node.title }}》
+                    </span>
+                    吗?
+                  </v-card-text>
+
+                  <v-card-actions class="justify-end">
+                    <v-btn color="red" @click="deleteTrendItem(node.id)">确认</v-btn>
+                    <v-btn @click="isActive.value = false">取消</v-btn>
+                  </v-card-actions>
+                </v-card>
+              </template>
+            </v-dialog>
+          </v-card-text>
+        </v-card>
       </template>
       <v-card
         :subtitle="getTime(node.createdAt)"
         :title="node.title"
+        class="max-w-500px"
         transition="scroll-y-reverse-transition"
       >
         <template v-slot:prepend>
@@ -94,6 +130,16 @@
               </v-hover>
             </v-container>
           </v-card>
+          <v-card v-else variant="text">
+            <v-card-text class="m-t-16px bg-[rgba(var(--v-theme-subContent))]!" variant="text">
+              <v-alert
+                density="compact"
+                text="原文章已删除请查看其他内容"
+                title="错误"
+                type="error"
+              ></v-alert>
+            </v-card-text>
+          </v-card>
         </v-card-text>
         <template v-slot:append>
           <div class="justify-self-end">
@@ -108,6 +154,9 @@
 
 <script setup lang="ts">
 import type { FileObj } from "~/type/api";
+import { getMyTrendList } from "@/api/index";
+
+const { notify } = useNotification();
 /**
  * @descripttion:动态列表
  * @return {*}
@@ -121,17 +170,6 @@ interface trendList {
     username: string;
     avatart: FileObj;
   };
-  comment_cs: {
-    id: number;
-    content: string;
-    createdAt: string;
-    updatedAt: string;
-    users_permissions_user: {
-      id: number;
-      username: string;
-      avatart?: FileObj;
-    };
-  }[];
   likeUsers: {
     id: number;
     username: string;
@@ -150,11 +188,83 @@ interface trendList {
   };
   createdAt: string;
 }
-const props = defineProps<{
-  list: trendList[];
-}>();
+
+const trendList = ref<trendList[]>([]);
+
+getMyTrendList().then((data) => {
+  if (data.data) {
+    trendList.value = data.data.map((element) => {
+      return {
+        createdAt: element.attributes.createdAt,
+        id: element.id,
+        title: element.attributes.title,
+        text: element.attributes.text,
+        users_permissions_user: {
+          id: element.attributes.users_permissions_user.data.id,
+          username: element.attributes.users_permissions_user.data.attributes.username,
+          avatart:
+            element.attributes.users_permissions_user.data.attributes.avatart.data.attributes,
+        },
+        likeUsers: element.attributes.likeUsers.data.map((element) => {
+          return {
+            id: element.id,
+            username: element.attributes.username,
+          };
+        }),
+        aboutArticle: {
+          id: element.attributes.aboutArticle.data.id,
+          title: element.attributes.aboutArticle.data.attributes.title,
+          introduction: element.attributes.aboutArticle.data.attributes.introduction,
+          createdAt: element.attributes.aboutArticle.data.attributes.createdAt,
+          cover: element.attributes.aboutArticle.data.attributes.cover.data.attributes,
+          publisher: {
+            id: element.attributes.aboutArticle.data.attributes.publisher.data.id,
+            username:
+              element.attributes.aboutArticle.data.attributes.publisher.data.attributes.username,
+            avatart:
+              element.attributes.aboutArticle.data.attributes.publisher.data.attributes.avatart.data
+                .attributes,
+          },
+        },
+      };
+    });
+  }
+});
 const router = useRouter();
-const { list } = toRefs(props);
+
+const myself = useMystore();
+myself.linkUserInfo();
+/**
+ * @descripttion:删除动态
+ * @param {*} trendId
+ * @return {*}
+ */
+function deleteTrendItem(trendId: number): void {
+  let index = trendList.value.findIndex((element) => {
+    return element.id == trendId;
+  });
+  if (!~index) {
+    return;
+  }
+  trendList.value.splice(index, 1);
+  myself
+    .deleteTrendItem(trendId)
+    .then(() => {
+      notify({
+        title: "成功",
+        text: "删除成功",
+        type: "success",
+      });
+    })
+    .catch(() => {
+      notify({
+        title: "失败",
+        text: "删除失败",
+        type: "error",
+      });
+    });
+}
+
 /**
  * @descripttion:前往文章详情页
  * @return {*}
@@ -174,28 +284,5 @@ function getTime(date: string): string {
   let now = dayjs(date).format("YYYY-MM-DD HH:mm");
   return now;
 }
-
-const years = [
-  {
-    color: "cyan",
-    year: "1960",
-  },
-  {
-    color: "green",
-    year: "1970",
-  },
-  {
-    color: "pink",
-    year: "1980",
-  },
-  {
-    color: "amber",
-    year: "1990",
-  },
-  {
-    color: "orange",
-    year: "2000",
-  },
-];
 </script>
 <style lang="scss"></style>

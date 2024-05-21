@@ -10,6 +10,9 @@ import type {
   MyArticlesTable,
   Pagination,
   FileObj,
+  EditeArticMsg,
+  Labels,
+  MyupTrends,
 } from "~/type";
 import qs from "qs";
 const { notify } = useNotification();
@@ -281,6 +284,75 @@ export async function upArticles(articles: Article, user: number): Promise<PostR
 }
 
 /**
+ * @descripttion: 获取我发布的列表
+ * @return {*}
+ */
+export async function getMyTrendList(): Promise<Request<MyupTrends[] | undefined, undefined>> {
+  try {
+    const mySelf = useMystore();
+    const me = await mySelf.getUserInforAsync();
+
+    if (!me) {
+      return Promise.resolve({
+        data: void 0,
+      });
+    }
+    const id = me.id;
+    if (!~id) {
+      return Promise.resolve({
+        data: void 0,
+      });
+    }
+    const query = qs.stringify(
+      {
+        populate: {
+          cover: true,
+          users_permissions_user: {
+            populate: {
+              avatart: true,
+            },
+            fields: ["username"],
+          },
+          likeUsers: {
+            fields: ["username"],
+          },
+          aboutArticle: {
+            populate: {
+              publisher: {
+                populate: {
+                  avatart: true,
+                  fields: ["username"],
+                },
+              },
+              cover: true,
+              fields: ["title", "introduction", "createdAt"],
+            },
+          },
+        },
+        filters: {
+          users_permissions_user: {
+            id: {
+              $eq: id,
+            },
+          },
+        },
+      },
+      {
+        encodeValuesOnly: true,
+      }
+    );
+    const response = await httpGet<Request<MyupTrends[], undefined>>("/trends?" + query);
+    return response;
+  } catch (error) {
+    notify({
+      text: "未知错误",
+      type: "error",
+    });
+    throw error;
+  }
+}
+
+/**
  * @descripttion: 获取我发布的文章
  * @param {number} page
  * @param {number} pageSize
@@ -288,7 +360,7 @@ export async function upArticles(articles: Article, user: number): Promise<PostR
  */
 export async function getMyArticleList(
   page: number = 1,
-  pageSize: number = 10,
+  pageSize: number = 20,
   search?: string
 ): Promise<Request<MyArticlesTable[] | undefined, Pagination>> {
   try {
@@ -331,6 +403,98 @@ export async function getMyArticleList(
       }
     );
     const response = await httpGet<Request<MyArticlesTable[], Pagination>>("/articles?" + query);
+    return response;
+  } catch (error) {
+    notify({
+      text: "未知错误",
+      type: "error",
+    });
+    throw error;
+  }
+}
+
+/**
+ * @descripttion: 获取文章的详细信息
+ * @param {number} articId
+ * @return {*}
+ */
+export async function getArticleInfoByid(articId: number): Promise<PostRequest<EditeArticMsg>> {
+  try {
+    const query = qs.stringify(
+      {
+        populate: ["imgs", "labels", "classification", "cover"],
+      },
+      {
+        encodeValuesOnly: true,
+      }
+    );
+    const response = await httpGet<PostRequest<EditeArticMsg>>(`/articles/${articId}?` + query);
+    return response;
+  } catch (error) {
+    notify({
+      text: "未知错误",
+      type: "error",
+    });
+    throw error;
+  }
+}
+
+/**
+ * @descripttion: 更新文章信息
+ * @return {*}
+ */
+export async function updatedArticInfoByid(
+  articId: number,
+  data: {
+    title?: string;
+    content?: string;
+    imgs?: FileObj[];
+    introduction?: string;
+    classification?: Labels;
+    labels?: Labels[];
+    cover?: FileObj[];
+  }
+): Promise<any> {
+  try {
+    const response = await httpPut(`/articles/${articId}`, {
+      data,
+    });
+    return response;
+  } catch (error) {
+    notify({
+      text: "未知错误",
+      type: "error",
+    });
+    throw error;
+  }
+}
+
+/**
+ * @descripttion: 删除文章
+ * @param {number} articId
+ * @return {*}
+ */
+export async function deleteArticInfoByid(articId: number): Promise<any> {
+  try {
+    const response = await httpDelete(`/articles/${articId}`);
+    return response;
+  } catch (error) {
+    notify({
+      text: "未知错误",
+      type: "error",
+    });
+    throw error;
+  }
+}
+
+/**
+ * @descripttion: 删除动态
+ * @param {number} trend
+ * @return {*}
+ */
+export async function deleteTrend(trend: number): Promise<any> {
+  try {
+    const response = await httpDelete(`/trends/${trend}`);
     return response;
   } catch (error) {
     notify({

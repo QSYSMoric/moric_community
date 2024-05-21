@@ -65,11 +65,11 @@
                     </v-card-text>
                   </v-card>
                 </v-sheet>
-                <v-sheet class="flex! gap-16px!">
+                <!-- <v-sheet class="flex! gap-16px!">
                   <span class="text-caption"> 0 关注 </span>
                   <span class="text-caption"> 32 粉丝 </span>
                   <span class="text-caption"> 908 获赞与收藏 </span>
-                </v-sheet>
+                </v-sheet> -->
               </v-col>
               <v-sheet class="absolute right-10px top-0px">
                 <v-btn color="primary" @click="basicForm.switchState" variant="plain"> 编辑 </v-btn>
@@ -190,13 +190,15 @@
             </v-row>
             <v-row v-else>
               <v-col>
-                <Editor
-                  v-model="detailedForm.data.explain"
-                  ref="ediotrRead"
-                  :api-key="editorConfig.apiKey"
-                  :init="editorConfig.editInit"
-                  tinymceScriptSrc="/tinymce/tinymce.min.js"
-                />
+                <ClientOnly>
+                  <Editor
+                    v-model="detailedForm.data.explain"
+                    ref="ediotrRead"
+                    :api-key="editorConfig.apiKey"
+                    :init="editorConfig.editInit"
+                    tinymceScriptSrc="/tinymce/tinymce.min.js"
+                  />
+                </ClientOnly>
               </v-col>
             </v-row>
           </ClientOnly>
@@ -250,6 +252,7 @@
 import { UploadFileCommand } from "@/class/UploadFileCommand";
 import type { Classification, FileObj } from "~/type";
 import { upDataMeInfo } from "@/api/index";
+
 let coverFiledCommand: Ref<UploadFileCommand> = ref(new UploadFileCommand([]));
 const myself = useMystore();
 const select = ref(0);

@@ -47,10 +47,44 @@
             </v-card>
           </template>
           <template v-slot:item.actions="{ item }">
-            <v-btn icon="mdi-pencil" color="primary" variant="text" size="small"> </v-btn>
-            <v-btn icon="mdi-delete" color="primary" variant="text" size="small"> </v-btn>
-            <!-- <v-icon class="me-2" size="small"> mdi-pencil </v-icon>
-                <v-icon size="small"> mdi-delete </v-icon> -->
+            <v-btn
+              icon="mdi-pencil"
+              @click="goEditeArtic(item.id)"
+              color="primary"
+              variant="text"
+              size="small"
+            >
+            </v-btn>
+            <v-dialog transition="dialog-bottom-transition" width="auto">
+              <template v-slot:activator="{ props: activatorProps }">
+                <v-btn
+                  v-bind="activatorProps"
+                  icon="mdi-delete"
+                  color="red"
+                  variant="text"
+                  size="small"
+                >
+                </v-btn>
+              </template>
+              <template v-slot:default="{ isActive }">
+                <v-card>
+                  <v-toolbar title="要删除吗？"></v-toolbar>
+
+                  <v-card-text>
+                    确定删除你的文章:
+                    <span class="font-semibold color-[rgba(var(--v-theme-primary))]">
+                      《{{ item.title }}》
+                    </span>
+                    吗?
+                  </v-card-text>
+
+                  <v-card-actions class="justify-end">
+                    <v-btn @click="deleteArtic(item.id)" color="red">确认</v-btn>
+                    <v-btn @click="isActive.value = false">取消</v-btn>
+                  </v-card-actions>
+                </v-card>
+              </template>
+            </v-dialog>
           </template>
           <template v-slot:item.createdAt="{ item }">
             {{ dayjs(item.createdAt).format("YYYY-MM-DD HH:mm") }}
@@ -73,12 +107,14 @@
   </v-card>
 </template>
 <script setup lang="ts">
-import { getMyArticleList } from "@/api/index";
-import type { MyArticlesTables } from "~/type/home";
+import { getMyArticleList, deleteArticInfoByid } from "@/api/index";
+import type { MyArticlesTables } from "@/type/home";
 const search = ref("");
 const dayjs = useDayjs();
+const router = useRouter();
 const loading = ref(true);
 const totalItems = ref(0);
+const { notify } = useNotification();
 const articList = ref<MyArticlesTables[]>([]);
 
 const headers = ref([
@@ -126,6 +162,49 @@ function updateOption({
     }
     loading.value = false;
   });
+}
+
+/**
+ * @descripttion: 前往文章编辑页面
+ * @param {*} articId
+ * @return {*}
+ */
+function goEditeArtic(articId: number): void {
+  router.push({
+    path: "/personalCenter/editeArticle",
+    query: {
+      articId: articId,
+    },
+  });
+}
+
+/**
+ * @descripttion: 删除文章
+ * @param {*} articId
+ * @return {*}
+ */
+function deleteArtic(articId: number): void {
+  let index = articList.value.findIndex((element) => {
+    return element.id == articId;
+  });
+  if (!~index) {
+    return;
+  }
+  deleteArticInfoByid(articId)
+    .then(() => {
+      articList.value.splice(index, 1);
+      notify({
+        title: "成功",
+        text: "删除成功",
+        type: "success",
+      });
+    })
+    .catch((err) => {
+      notify({
+        text: "删除失败",
+        type: "error",
+      });
+    });
 }
 </script>
 <style lang="scss" scoped></style>

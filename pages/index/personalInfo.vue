@@ -41,11 +41,11 @@
             </v-card-text>
           </v-card>
         </v-sheet>
-        <v-sheet class="flex! gap-16px!">
+        <!-- <v-sheet class="flex! gap-16px!">
           <span class="text-caption"> 0 关注 </span>
           <span class="text-caption"> 32 粉丝 </span>
           <span class="text-caption"> 908 获赞与收藏 </span>
-        </v-sheet>
+        </v-sheet> -->
       </v-col>
     </v-row>
     <v-row class="m-t-0 p-t-0">

@@ -9,6 +9,7 @@ import type {
   Classification,
   Talents,
   UserInfo,
+  FileObj,
 } from "~/type";
 import qs from "qs";
 const { notify } = useNotification();
@@ -140,6 +141,7 @@ export async function postComments(comment: Comment): Promise<
  */
 export async function getHomeArticlesList(
   page: number = 1,
+  classificationId?: number,
   pageSize: number = 10
 ): Promise<Request<ArticleHomeList[], Pagination>> {
   try {
@@ -157,6 +159,13 @@ export async function getHomeArticlesList(
         pagination: {
           page,
           pageSize,
+        },
+        filters: {
+          classification: {
+            id: {
+              $eq: classificationId == -1 ? void 0 : classificationId,
+            },
+          },
         },
         fields: ["title", "introduction", "createdAt"],
       },
@@ -235,7 +244,7 @@ export async function getArticleInfo(
 export async function getUserList(
   excels: Classification[],
   page: number = 1,
-  pageSize: number = 10
+  pageSize: number = 20
 ): Promise<Talents[]> {
   try {
     const query = qs.stringify({
@@ -252,7 +261,9 @@ export async function getUserList(
       filters: {
         excels: {
           id: {
-            $in: [6],
+            $in: excels.map((element) => {
+              return element.id;
+            }),
           },
         },
       },
@@ -330,6 +341,90 @@ export async function getUserInfo(userId: number): Promise<UserInfo> {
     });
     const response = await httpGet<UserInfo>("/users/" + userId + "?" + query);
     return response;
+  } catch (error) {
+    notify({
+      text: "未知错误",
+      type: "error",
+    });
+    throw error;
+  }
+}
+
+/**
+ * @descripttion: 文章搜索列表
+ * @return {*}
+ */
+interface ArticleList {
+  id: number;
+  attributes: {
+    title: string;
+    classification: {
+      data: {
+        id: number;
+        attributes: {
+          title: string;
+        };
+      };
+    };
+    cover: {
+      data: {
+        id: number;
+        attributes: FileObj;
+      };
+    };
+  };
+}
+
+/**
+ * @descripttion: 用户搜索列表
+ * @return {*}
+ */
+interface UserList {
+  id: number;
+  username: string;
+  excels: {
+    id: number;
+    title: string;
+  }[];
+  avatart: FileObj;
+}
+
+/**
+ * @descripttion: 模糊搜索
+ * @param {string} str
+ * @return {*}
+ */
+export async function fuzzySearch(str: string): Promise<{
+  articleList: ArticleList[];
+  userList: UserList[];
+}> {
+  try {
+    const articQuery = qs.stringify({
+      populate: ["classification", "cover"],
+      fields: ["title"],
+      filters: {
+        title: {
+          $containsi: str,
+        },
+      },
+    });
+    const userQuery = qs.stringify({
+      populate: ["excels", "avatart"],
+      filters: {
+        username: {
+          $containsi: str,
+        },
+      },
+      fields: ["username"],
+    });
+    const userListResponse = await httpGet<UserList[]>("/users?" + userQuery);
+    const articleListResponse = await httpGet<Request<ArticleList[], undefined>>(
+      "/articles?" + articQuery
+    );
+    return {
+      userList: userListResponse,
+      articleList: articleListResponse.data,
+    };
   } catch (error) {
     notify({
       text: "未知错误",

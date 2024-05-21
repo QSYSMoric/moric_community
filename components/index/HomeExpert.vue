@@ -80,23 +80,17 @@
                 class="py-1 pe-0"
                 cols="auto"
               >
-                <v-chip :disabled="loading" closable @click:close="selected.splice(i, 1)">
+                <v-chip :disabled="loading" closable @click:close="closeSelect(selection, i)">
                   {{ selection.attributes.title }}
                 </v-chip>
               </v-col>
               <v-col cols="12">
-                <v-text-field
-                  ref="searchField"
-                  v-model="search"
-                  label="输入搜索领域"
-                  hide-details
-                  single-line
-                ></v-text-field>
+                <p>选择你要寻找的领域博主</p>
               </v-col>
             </v-row>
           </v-container>
           <v-divider></v-divider>
-          <v-list>
+          <v-list v-if="allSelected">
             <v-list-item
               v-for="(item, i) in itemList"
               @click="addClass(item)"
@@ -128,7 +122,7 @@
 
 <script setup lang="ts">
 import type { Classification, FileObj, Labels, Talents } from "@/type/index";
-import { getUserList } from "@/api/index";
+import { getUserList, fuzzySearch } from "@/api/index";
 
 const items = ref<Talents[]>([]);
 const searchField = ref();
@@ -152,7 +146,6 @@ const itemList = ref<Classification[]>([]);
  * @return {*}
  */
 function goAttributesInfo(articleId: number): void {
-  console.log(articleId);
   router.push({
     path: `/${articleId}`,
   });
@@ -190,12 +183,11 @@ config.getClassification().then((data: Classification[]) => {
 });
 
 const allSelected = computed(() => {
-  return selected.value.length != itemList.value.length;
+  return itemList.value.length;
 });
 
 getUserList(selected.value).then((data) => {
   items.value = data;
-  console.log(data);
 });
 
 /**
@@ -226,6 +218,11 @@ function goPersonalInfo(userId: number): void {
       userId,
     },
   });
+}
+
+function closeSelect(classification: Classification, i: number) {
+  itemList.value.push(classification);
+  selected.value.splice(i, 1);
 }
 
 /**
@@ -270,6 +267,10 @@ watch(selected, () => {
  */
 function next(): void {
   loading.value = true;
+  getUserList(selected.value).then((data) => {
+    items.value = data;
+    loading.value = false;
+  });
 }
 </script>
 <style lang="scss">

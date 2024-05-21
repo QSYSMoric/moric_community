@@ -43,7 +43,7 @@ class LikeReceiver {
         type: "success",
       });
     }
-    return response.data;
+    return response.data!;
   }
 }
 

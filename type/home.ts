@@ -228,3 +228,108 @@ export interface MyArticlesTables {
     attributes: FileObj;
   };
 }
+
+/**
+ * @descripttion:编辑文章所需参数
+ * @return {*}
+ */
+export interface EditeArticMsg {
+  classification: {
+    data: {
+      id: number;
+      attributes: {
+        title: string;
+      };
+    };
+  };
+  imgs: {
+    data: {
+      id: number;
+      attributes: FileObj;
+    }[];
+  };
+  content: string;
+  createdAt: string;
+  introduction: string;
+  cover: {
+    data: {
+      id: number;
+      attributes: FileObj;
+    };
+  };
+  labels: {
+    data: {
+      id: number;
+      attributes: {
+        title: string;
+      };
+    }[];
+  };
+  title: string;
+  updatedAt: string;
+}
+
+/**
+ * @descripttion: 我所发布的动态
+ * @return {*}
+ */
+export interface MyupTrends {
+  id: number;
+  attributes: {
+    title: string;
+    text: string;
+    createdAt: string;
+    users_permissions_user: {
+      data: {
+        id: number;
+        attributes: {
+          username: string;
+          avatart: {
+            data: {
+              id: number;
+              attributes: FileObj;
+            };
+          };
+        };
+      };
+    };
+    likeUsers: {
+      data: {
+        id: number;
+        attributes: {
+          username: string;
+        };
+      }[];
+    };
+    aboutArticle: {
+      data: {
+        id: number;
+        attributes: {
+          title: string;
+          createdAt: string;
+          introduction: string;
+          cover: {
+            data: {
+              id: number;
+              attributes: FileObj;
+            };
+          };
+          publisher: {
+            data: {
+              id: number;
+              attributes: {
+                username: string;
+                avatart: {
+                  data: {
+                    id: number;
+                    attributes: FileObj;
+                  };
+                };
+              };
+            };
+          };
+        };
+      };
+    };
+  };
+}

@@ -55,17 +55,6 @@ export interface Me {
       username: string;
       avatart: FileObj;
     };
-    comment_cs: {
-      id: number;
-      content: string;
-      createdAt: string;
-      updatedAt: string;
-      users_permissions_user: {
-        id: number;
-        username: string;
-        avatart?: FileObj;
-      };
-    }[];
     likeUsers: {
       id: number;
       username: string;
@@ -191,6 +180,11 @@ export interface PostRequest<T> {
         attributes: T;
       }
     | undefined;
+  meta: any;
+}
+
+export interface GetRequest<T> {
+  data: T;
   meta: any;
 }
 

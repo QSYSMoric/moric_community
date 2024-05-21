@@ -1,5 +1,5 @@
 <template>
-  <v-timeline align="start">
+  <v-timeline align="start" class="max-w-1200px">
     <v-timeline-item
       v-for="(node, i) in list"
       dot-color="primary"
@@ -16,9 +16,11 @@
           >
         </div>
       </template>
+
       <v-card
         :subtitle="getTime(node.createdAt)"
         :title="node.title"
+        class="max-w-500px"
         transition="scroll-y-reverse-transition"
       >
         <template v-slot:prepend>

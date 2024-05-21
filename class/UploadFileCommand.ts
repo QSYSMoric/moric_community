@@ -23,7 +23,7 @@ class FileUploader {
       this.id = uploader.fileObj?.id as unknown as string;
       this.isUp = true;
       this.fileObj = uploader.fileObj;
-      console.log(this.fileObj);
+      this.fileObj!.id = this.id as unknown as number;
       this.url = getFileUrl(uploader.fileObj);
     }
   }

@@ -1,5 +1,5 @@
 import type { FileObj, Me, Optionlist } from "@/type";
-import { getUserInfor, getPublishedArticles } from "~/api/user";
+import { getUserInfor, getPublishedArticles, deleteTrend } from "~/api/user";
 import { useRequest, useToggle } from "vue-hooks-plus";
 
 interface MeState {
@@ -38,6 +38,11 @@ export const useMystore = defineStore("myStore", {
     },
   },
   actions: {
+    async linkUserInfo(): Promise<void> {
+      getUserInfor().then((data) => {
+        this.$state.me = data;
+      });
+    },
     async getUserInforAsync(): Promise<Me | undefined> {
       const token = toRef(useCookie("token"));
       const [state, { toggle }] = useToggle();
@@ -104,6 +109,17 @@ export const useMystore = defineStore("myStore", {
       this.$state.me.avatart = avatart;
       this.$state.me.excels = excels;
       this.$state.me.introduction = introduction;
+    },
+    async deleteTrendItem(trendId: number): Promise<any> {
+      let index = this.$state.me.trends.findIndex((element) => {
+        return element.id == trendId;
+      });
+      console.log(trendId);
+      if (!~index) {
+        return Promise.reject(void 0);
+      }
+      await deleteTrend(trendId);
+      this.$state.me.trends.splice(index, 1);
     },
   },
 });

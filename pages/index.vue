@@ -375,7 +375,7 @@ const items = ref<
     value: "1",
     click: () => {
       router.replace({
-        path: "/login",
+        path: "/personalCenter",
       });
     },
   },
@@ -407,6 +407,19 @@ function go(url: string): void {
   });
 }
 const icons = ref(["mdi-facebook", "mdi-twitter", "mdi-linkedin", "mdi-instagram"]);
+
+watch(
+  () => {
+    return route.path;
+  },
+  () => {
+    //切换路由
+    let selectIndex = getRouteByNumber(route.path, 1);
+    if (selectIndex) {
+      selected.value = [routeMap.get(selectIndex)!];
+    }
+  }
+);
 </script>
 <style lang="scss">
 .clear-init {

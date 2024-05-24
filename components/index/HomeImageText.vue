@@ -45,7 +45,10 @@
             </template>
 
             <v-img cover>
-              <LazyImg :url="getFileUrl(item.attributes.cover.data?.attributes)" />
+              <LazyImg
+                class="max-h-300px"
+                :url="getFileUrl(item.attributes.cover.data?.attributes)"
+              />
             </v-img>
 
             <v-card-item>

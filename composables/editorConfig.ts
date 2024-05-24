@@ -10,7 +10,7 @@ async function editorUpFile(blobInfo: { base64: () => string; blob: () => File }
     upFile(data)
       .then((data) => {
         const orgUrl = useRuntimeConfig().public.file_url;
-        let fileUrl = orgUrl + data[0].formats.medium.url;
+        let fileUrl = orgUrl + data[0].url;
         if (fileUrl) {
           resolve(fileUrl);
         } else {

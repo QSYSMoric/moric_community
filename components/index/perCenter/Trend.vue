@@ -69,7 +69,7 @@
             :init="editorConfig.readInit"
           />
           <v-card
-            v-if="node.aboutArticle"
+            v-if="node.aboutArticle.id"
             class="m-t-16px bg-[rgba(var(--v-theme-subContent))]!"
             variant="text"
           >
@@ -212,18 +212,18 @@ getMyTrendList().then((data) => {
           };
         }),
         aboutArticle: {
-          id: element.attributes.aboutArticle.data.id,
-          title: element.attributes.aboutArticle.data.attributes.title,
-          introduction: element.attributes.aboutArticle.data.attributes.introduction,
-          createdAt: element.attributes.aboutArticle.data.attributes.createdAt,
-          cover: element.attributes.aboutArticle.data.attributes.cover.data.attributes,
+          id: element.attributes.aboutArticle.data?.id,
+          title: element.attributes.aboutArticle.data?.attributes.title,
+          introduction: element.attributes.aboutArticle.data?.attributes.introduction,
+          createdAt: element.attributes.aboutArticle.data?.attributes.createdAt,
+          cover: element.attributes.aboutArticle.data?.attributes.cover.data.attributes,
           publisher: {
-            id: element.attributes.aboutArticle.data.attributes.publisher.data.id,
+            id: element.attributes.aboutArticle.data?.attributes.publisher.data.id,
             username:
-              element.attributes.aboutArticle.data.attributes.publisher.data.attributes.username,
+              element.attributes.aboutArticle.data?.attributes.publisher.data.attributes.username,
             avatart:
-              element.attributes.aboutArticle.data.attributes.publisher.data.attributes.avatart.data
-                .attributes,
+              element.attributes.aboutArticle.data?.attributes.publisher.data.attributes.avatart
+                .data.attributes,
           },
         },
       };

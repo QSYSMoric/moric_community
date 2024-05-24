@@ -155,7 +155,7 @@ const articles = ref<
 >([]);
 const dayjs = useDayjs();
 let now = dayjs().format("YYYY-MM-DD HH:mm");
-
+const router = useRouter();
 /**
  * @descripttion: 发布动态
  * @return {*}
@@ -203,6 +203,9 @@ function submitTrend(): void {
       notify({
         text: "发布成功",
         type: "success",
+      });
+      router.push({
+        path: "/",
       });
     })
     .finally(() => {

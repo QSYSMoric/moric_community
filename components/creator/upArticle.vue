@@ -52,7 +52,7 @@
                 color="primary"
               />
 
-              <label class="label text-grey-darken-2">选择文章的标签</label>
+              <!-- <label class="label text-grey-darken-2">选择文章的标签</label>
               <v-select
                 v-model="articleForm.receiver.labels"
                 :items="getLabelList"
@@ -63,7 +63,7 @@
                 color="primary"
                 chips
                 multiple
-              />
+              /> -->
               <label class="label text-grey-darken-2">上传封面</label>
               <v-file-input
                 label="为你的文章选件衣服吧"
@@ -91,7 +91,7 @@
                 multiple
               ></v-file-input>
               <v-btn class="mt-1" color="primary" type="button" @click="submit" block
-                >提交你的动态</v-btn
+                >提交你的文章</v-btn
               >
             </v-form>
           </v-card>
@@ -173,7 +173,7 @@
     content-class="align-center"
     :absolute="false"
   >
-    <v-sheet class="rounded-lg w-100vw h-100vh m-card lg:w-80vw lg:h-90vh relative">
+    <v-sheet class="rounded-lg w-100vw overflow-y-auto h-100vh m-card lg:w-80vw lg:h-90vh relative">
       <v-container style="height: 100%" class="pa-0 overflow-y-auto lg:overflow-y-hidden!">
         <v-row class="ma-0 h-100%">
           <v-col cols="12" md="7" class="h-100% flex items-center">
@@ -185,8 +185,13 @@
               ></v-carousel-item>
             </v-carousel>
           </v-col>
-          <v-col cols="12" md="5" class="pa-0">
-            <v-card variant="flat" :subtitle="now" :title="my.getMe.username">
+          <v-col cols="12" md="5" class="pa-0 h-100%">
+            <v-card
+              variant="flat"
+              class="p-x-16px! h-100% lg:p-x-0px! scroll-container overflow-y-auto!"
+              :subtitle="now"
+              :title="my.getMe.username"
+            >
               <template v-slot:prepend>
                 <v-avatar color="blue-darken-2">
                   <v-img :src="getFileUrl(my.getMe.avatart)"></v-img>
@@ -303,6 +308,7 @@ const config = useConfigstore();
 const coverFile = ref<File[]>([]);
 const imgFiles = ref<File[]>([]);
 const show = ref(false);
+const router = useRouter();
 const dayjs = useDayjs();
 let now = dayjs().format("YYYY-MM-DD HH:mm");
 let now_ = dayjs().format("YYYY-MM-DD");
@@ -448,6 +454,9 @@ function submit(): void {
       articleForm.value.receiver.imgs = imgsArray;
       articleForm.value.execute();
       overlay.value = false;
+      router.push({
+        path: "/",
+      });
     }
   );
 }

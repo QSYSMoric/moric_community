@@ -50,7 +50,7 @@
                 return-object
               />
 
-              <label class="label text-grey-darken-2">选择文章的标签</label>
+              <!-- <label class="label text-grey-darken-2">选择文章的标签</label>
               <v-select
                 v-model="articleForm.receiver.labels"
                 :items="getLabelList"
@@ -62,7 +62,7 @@
                 chips
                 multiple
                 return-object
-              />
+              /> -->
               <label class="label text-grey-darken-2">上传封面</label>
               <v-file-input
                 label="为你的文章选件衣服吧"
@@ -184,8 +184,13 @@
               ></v-carousel-item>
             </v-carousel>
           </v-col>
-          <v-col cols="12" md="5" class="pa-0">
-            <v-card variant="flat" :subtitle="now" :title="my.getMe.username">
+          <v-col cols="12" md="5" class="pa-0 h-100%">
+            <v-card
+              variant="flat"
+              class="p-x-16px! h-100% lg:p-x-0px! scroll-container overflow-y-auto!"
+              :subtitle="now"
+              :title="my.getMe.username"
+            >
               <template v-slot:prepend>
                 <v-avatar color="blue-darken-2">
                   <v-img :src="getFileUrl(my.getMe.avatart)"></v-img>
@@ -445,6 +450,12 @@ config.getClassification().then((data: Classification[]) => {
  */
 function submit(): void {
   overlay.value = true;
+  articleForm.value.receiver.classification = {
+    id: articleForm.value.receiver.classification?.id!,
+    attributes: {
+      title: articleForm.value.receiver.classification?.attributes.title!,
+    },
+  };
   Promise.all([coverFiledCommand.value.execute(), imgsFiledCommand.value.execute()]).then(
     (data) => {
       const coverArray = data[0].filter((element: FileObj) => element !== undefined);
@@ -452,6 +463,7 @@ function submit(): void {
       articleForm.value.receiver.cover = coverArray;
       articleForm.value.receiver.imgs = imgsArray;
       articleForm.value.execute();
+
       overlay.value = false;
     }
   );

@@ -84,6 +84,7 @@ const name = ref<string>("");
 const email = ref("");
 const password = ref("");
 const vForm = ref();
+const router = useRouter();
 const overlay = ref(false);
 const { ruleEmail, rulePassLen, ruleRequired } = useFormRules();
 const { notify } = useNotification();
@@ -100,6 +101,9 @@ const submit = async () => {
         })
         .finally(() => {
           overlay.value = false;
+          router.push({
+            path: "/",
+          });
         });
     } else {
       notify({

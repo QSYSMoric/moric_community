@@ -183,6 +183,10 @@ export interface PostRequest<T> {
   meta: any;
 }
 
+/**
+ * @descripttion: get请求返回数据
+ * @return {*}
+ */
 export interface GetRequest<T> {
   data: T;
   meta: any;

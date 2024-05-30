@@ -69,6 +69,16 @@ export class Trend {
    */
   commentDo(text?: string): void {
     const me = useMystore();
+    const { ruleWordFilter } = useFormRules();
+    if (!ruleWordFilter(text!)) {
+      notify({
+        title: "错误",
+        text: "你输入的内容含有敏感词请重新输入",
+        type: "warn",
+      });
+      return;
+    }
+
     if (!text) {
       notify({
         title: "警告",

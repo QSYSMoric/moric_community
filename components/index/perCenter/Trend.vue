@@ -12,9 +12,9 @@
           <v-card-text>
             <div class="pt-1 headline text-subtitle-1 mb-2">
               {{ getTime(node.createdAt) }}
-              <span class="text-subtitle-2 font-normal opacity-[var(--v-medium-emphasis-opacity)]"
-                >发布了动态</span
-              >
+              <span class="text-subtitle-2 font-normal opacity-[var(--v-medium-emphasis-opacity)]">
+                发布了动态
+              </span>
             </div>
             <v-dialog transition="dialog-bottom-transition" width="auto">
               <template v-slot:activator="{ props: activatorProps }">
@@ -31,7 +31,6 @@
               <template v-slot:default="{ isActive }">
                 <v-card>
                   <v-toolbar title="要删除吗？"></v-toolbar>
-
                   <v-card-text>
                     确定删除你的动态:
                     <span class="font-semibold color-[rgba(var(--v-theme-primary))]">
@@ -39,7 +38,6 @@
                     </span>
                     吗?
                   </v-card-text>
-
                   <v-card-actions class="justify-end">
                     <v-btn color="red" @click="deleteTrendItem(node.id)">确认</v-btn>
                     <v-btn @click="isActive.value = false">取消</v-btn>

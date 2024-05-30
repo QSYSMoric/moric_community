@@ -6,7 +6,6 @@ const shortTitle = "Vuetify 3 + Nuxt 3 Starter";
 const description = "Template to get you up and running with Nuxt 3 & Vuetify 3";
 const image = "https://vuetify3nuxt3starter.behonbaker.com/starter.png";
 const url = "https://vuetify3nuxt3starter.behonbaker.com/";
-console.log(process.env.API_ORGIN);
 
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({

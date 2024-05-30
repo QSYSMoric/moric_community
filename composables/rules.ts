@@ -1,3 +1,8 @@
+import Mint from "mint-filter";
+import SensitiveLexicon from "@/assets/content/SensitiveLexicon.json";
+// 创建Mint实例
+const mint = new Mint(SensitiveLexicon.words);
+
 export const useFormRules = () => {
   return {
     ruleRequired: (v: any) => !!v || "必要的信息",
@@ -17,6 +22,10 @@ export const useFormRules = () => {
         value[0].size < 2000000 ||
         "Avatar size should be less than 2 MB!"
       );
+    },
+    ruleWordFilter: (value: string) => {
+      let flag = mint.verify(value);
+      return flag;
     },
   };
 };

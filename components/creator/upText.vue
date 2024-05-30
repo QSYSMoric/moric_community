@@ -147,6 +147,7 @@ const { notify } = useNotification();
 const my = useMystore();
 const subLoading = ref<boolean>(false);
 const ediotrRead = ref();
+const { ruleWordFilter } = useFormRules();
 const articles = ref<
   {
     id: number;
@@ -167,8 +168,11 @@ const trends = ref<Trend>({
 });
 const show = ref(false);
 const firstNameRules = [
-  (value: string | any[]) => {
-    if (value?.length >= 3) return true;
+  (value: string) => {
+    if (!ruleWordFilter(value)) {
+      return "含有敏感词请重新输入";
+    }
+    if (value?.length >= 2) return true;
     return "标题必须至少包含3个字符。";
   },
 ];

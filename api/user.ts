@@ -429,6 +429,7 @@ export async function getArticleInfoByid(articId: number): Promise<PostRequest<E
       }
     );
     const response = await httpGet<PostRequest<EditeArticMsg>>(`/articles/${articId}?` + query);
+
     return response;
   } catch (error) {
     notify({
